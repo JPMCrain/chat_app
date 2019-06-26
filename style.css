@@ -6,12 +6,46 @@
 body {
 	margin: 0;
 	padding: 0;
+	display: flex;
 }
 
-h1, small {
-	padding-left: 5px;
+.section1 {
+	border-right: 5px solid darkslategray;
+}
+
+.section2 {
+	border-left: 5px solid darkslategray;
+	flex-grow: 2; 
+}
+
+h1, .heading__wrapper ,small {
+	display: flex;
 	background-color: #1976D2;
+	align-items: center;
 	color: snow;
+}
+
+.arrow {
+	font-weight: 700;
+	font-size: 1.2em;
+	color: black;
+	background-color: #1976D2;
+	padding: 5px;
+}
+
+.logo {
+	width: 56px;
+	height: 56px;
+	background-color: #1976D2;
+	padding: 10px;
+}
+
+ul{
+	background-color: snow;
+}
+
+li {
+	list-style-type: none;
 }
 
 h2, p {
@@ -19,8 +53,26 @@ h2, p {
 	background-color: snow;
 }
 
+.star__image {
+	background-color: snow;
+}
+
 h3 {
 	padding-left: 5px;
+}
+
+.tab__buttons {
+	display: flex;
+	background-color: snow;
+}
+
+.tabBtn {
+	display: flex;
+	background-color: rgb(175, 188, 202);
+	align-items: center;
+}
+.tab__image {
+	background-color: rgb(175, 188, 202);
 }
 
 button {
@@ -36,4 +88,8 @@ span {
 em {
 	font-size: larger;
 	font-style: normal;
+}
+
+a {
+	color: black;
 }
