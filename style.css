@@ -16,6 +16,18 @@ body {
 	flex-grow: 2; 
 }
 
+ul, 
+.a, 
+li,
+h2,
+p, 
+.star__image, 
+.section1, 
+.tab__buttons,
+.tabBtn,
+.tab__image {
+	background-color: snow;
+}
 
 /* heading layout */
 small {
@@ -37,22 +49,25 @@ h1, .heading__wrapper ,small {
 	padding: 10px;
 }
 
-ul, .a {
-	background-color: snow;
+ul, .list__wrapper, * {
+	margin: 0;
+	padding: 0;
 }
 
 li {
+	display: flex;
 	list-style-type: none;
+	height: auto;
+	box-sizing: border-box;
+	border-bottom: 1px solid #1976D2;
+}
+
+li:hover {
+	border-left: 10px solid  #1976D2;
 }
 
 h2, p {
-	padding-top: 16px;
-	padding-bottom: 16px;
-	background-color: snow;
-}
-
-.star__image {
-	background-color: snow;
+	padding: 16px;
 }
 
 h3 {
@@ -61,16 +76,23 @@ h3 {
 
 .tab__buttons {
 	display: flex;
-	background-color: snow;
+	width: 100%;
+	height: 60px;
 }
 
 .tabBtn {
 	display: flex;
-	background-color: rgb(175, 188, 202);
+	flex-direction: column;
+	justify-content: center;
+	border: none;
+	outline: none;
 	align-items: center;
+	width: 33%;
 }
-.tab__image {
-	background-color: rgb(175, 188, 202);
+
+.tabBtn:hover {
+	color: #1976D2;
+	border-bottom: 5px solid #1976D2;
 }
 
 button {
@@ -90,4 +112,12 @@ em {
 
 a {
 	color: black;
+}
+
+a:hover {
+	color: #1976D2;
+}
+
+a::selection {
+  color: #1976D2;
 }
