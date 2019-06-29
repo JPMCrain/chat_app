@@ -183,6 +183,9 @@ a::selection {
 .emojis {
 	width: 200px;
 	height: 200px;
+	overflow: auto;
+	padding: 5px;
+	box-sizing: content-box;
 	margin-left: 25px;
 	position: absolute;
 	bottom: 50px;
@@ -193,8 +196,17 @@ a::selection {
 .emojis__button {
 	border: none;
 	outline: none;
+	border-radius: 100%;
 	margin-left: 5px;
 	margin-bottom: 15px;
+}
+
+.emoji__image {
+	border-radius: 100%;
+}
+
+.emoji__image:hover {
+	background-color: yellow;
 }
 
 .tabBtn {
