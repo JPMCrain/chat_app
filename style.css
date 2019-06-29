@@ -5,11 +5,18 @@
 	font-family: Arial, sans-serif;
 }
 
-body {
+.section_wrapper {
 	margin: 0;
 	padding: 0;
 	display: flex;
-	flex-direction: column;
+	height: 600px;
+	flex-direction: row;
+	justify-content: stretch;
+}
+
+.section1 {
+	width: 40%;
+	overflow: auto;
 }
 
 .section2 {
@@ -25,7 +32,12 @@ p,
 .section1, 
 .tab__buttons,
 .tabBtn,
-.tab__image {
+.tab__image,
+.list__item,
+.channel__images,
+.message__wrapper,
+.footer__wrapper,
+img {
 	background-color: snow;
 }
 
@@ -39,7 +51,7 @@ h1, .heading__wrapper ,small {
 	background-color: #1976D2;
 	align-items: center;
 	color: snow;
-	height: 100px;
+	height: 80px;
 }
 
 .logo {
@@ -62,43 +74,34 @@ li {
 	border-bottom: 1px solid #1976D2;
 }
 
+.list__item {
+	display: flex;
+	flex-direction: row;
+	width: 550px;
+	justify-content: space-between;
+}
+
+.channel__images {
+	align-self: center;
+
+}
+ 
 li:hover {
-	border-left: 10px solid  #1976D2;
+	border-left: 5px solid  #1976D2;
+	color: #1976D2;
 }
 
 h2, p {
 	padding: 16px;
 }
 
-h3 {
-	padding-left: 5px;
+h2 {
+	font-weight: 500;
+	font-size: 24px;
 }
 
-.tab__buttons {
-	display: flex;
-	width: 100%;
-	height: 60px;
-}
-
-.tabBtn {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	border: none;
-	outline: none;
-	align-items: center;
-	width: 33%;
-}
-
-.tabBtn:hover {
-	color: #1976D2;
-	border-bottom: 5px solid #1976D2;
-}
-
-button {
-	margin-left: 5px;
-	background-color: #CDDC39;
-	text-transform: uppercase;
+.a {
+	text-decoration: none;
 }
 
 span {
@@ -120,4 +123,76 @@ a:hover {
 
 a::selection {
   color: #1976D2;
+}
+
+.messages {
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	height: 520px;
+}
+
+.first__message {
+	align-self: flex-end;
+	width: 80%;
+}
+
+.message {
+	padding-left: 25px;
+	width: 80%;
+}
+
+.message__title {
+	display: flex;
+	padding-top: 10px;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.message__wrapper {
+	display: flex;
+	justify-content: space-between;
+}
+
+.BTN5 {
+	align-self: flex-end;
+	background-color: #CDDC39;
+	text-transform: uppercase;
+	width: 50px;
+	height: 25px;
+}
+
+
+.footer {
+	width: 100%;
+	height: 80px;
+}
+
+.footer__wrapper {
+	display: flex;
+}
+
+.emoji__section {
+	height: 80px;
+}
+
+.tabBtn {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border: none;
+	outline: none;
+	align-items: center;
+	width: 33%;
+	height: 80px;
+}
+
+.tab__buttons {
+	display: flex;
+	width: 40%;
+}
+
+.tabBtn:hover {
+	color: #1976D2;
+	border-bottom: 5px solid #1976D2;
 }
