@@ -37,6 +37,9 @@ p,
 .channel__images,
 .message__wrapper,
 .footer__wrapper,
+.emoji__section,
+.emojis__button,
+.emojis,
 img {
 	background-color: snow;
 }
@@ -173,7 +176,25 @@ a::selection {
 }
 
 .emoji__section {
+	display: flex;
+	flex-direction: column-reverse;
 	height: 80px;
+}
+.emojis {
+	width: 200px;
+	height: 200px;
+	margin-left: 25px;
+	position: absolute;
+	bottom: 50px;
+	z-index: 2;
+	border: 1px solid black;
+}
+
+.emojis__button {
+	border: none;
+	outline: none;
+	margin-left: 5px;
+	margin-bottom: 15px;
 }
 
 .tabBtn {
