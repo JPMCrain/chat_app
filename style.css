@@ -229,11 +229,11 @@ a:hover {
 	border-bottom: 5px solid #1976D2;
 }
 
-#channelName, .starImage {
+#channelName, #starImage {
 	background-color: #1976D2;
 }
 
-.starImage {
+#starImage {
 	position: absolute;
 	right: 20px;
 }
