@@ -35,3 +35,14 @@ function selectedTab(button){
 		tab3.classList.add('tabBtn__active');
 	}
 }
+
+
+function toggleEmoji(){
+	let emojis = document.getElementById('emojis');
+
+	if(emojis.style.display == 'none'){
+		emojis.style.display = 'block';
+	}else {
+		emojis.style.display = 'none';
+	}
+}
