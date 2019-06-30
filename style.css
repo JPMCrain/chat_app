@@ -40,16 +40,19 @@ p,
 .emoji__section,
 .emojis__button,
 .emojis,
+
 img {
 	background-color: snow;
 }
 
 /* heading layout */
-small {
+#channelLocation {
+	text-decoration: none;
+	font-size: 28px;
 	padding-left: 10px;
 }
 
-h1, .heading__wrapper ,small {
+h1, .heading__wrapper ,#channelLocation {
 	display: flex;
 	background-color: #1976D2;
 	align-items: center;
@@ -88,7 +91,7 @@ li {
 	align-self: center;
 
 }
- 
+
 li:hover {
 	border-left: 5px solid  #1976D2;
 	color: #1976D2;
@@ -122,10 +125,6 @@ a {
 
 a:hover {
 	color: #1976D2;
-}
-
-a::selection {
-  color: #1976D2;
 }
 
 .messages {
@@ -228,4 +227,13 @@ a::selection {
 .tabBtn:hover {
 	color: #1976D2;
 	border-bottom: 5px solid #1976D2;
+}
+
+#channelName, .starImage {
+	background-color: #1976D2;
+}
+
+.starImage {
+	position: absolute;
+	right: 20px;
 }
