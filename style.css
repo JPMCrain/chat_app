@@ -229,6 +229,19 @@ a:hover {
 	border-bottom: 5px solid #1976D2;
 }
 
+.tabBtn__active {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border: none;
+	outline: none;
+	align-items: center;
+	width: 33%;
+	height: 80px;
+	color: #1976D2;
+	border-bottom: 5px solid #1976D2;
+}
+
 #channelName, #starImage {
 	background-color: #1976D2;
 }
