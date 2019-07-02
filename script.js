@@ -1,4 +1,5 @@
 let star = document.getElementById('starImage');
+let channelList = document.getElementById('channelList');
 
 function switchChannelName(channelName, channelLocation) {
 	document.getElementById('channelName').innerHTML = channelName;
@@ -6,6 +7,53 @@ function switchChannelName(channelName, channelLocation) {
 	document.getElementById('channelLocation').href = `http://what3words.com/${channelLocation}`;
 	star.src = 'https://ip.lfe.mw.tum.de/sections/star-o.png';
 }
+
+const channels = [
+	{title: '#Dog Box', location: 'eggs.jumpy.cheeses'},
+	{title: '#Cheesy Jokes', location: 'buzz.coverage.rank'},
+	{title: '#Book Lovers', location: 'drop.protest.powers'},
+	{title: `#Food Guru's`, location: 'slang.themes.plotting'},
+	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
+];
+
+channels.forEach(function(element) {
+	console.log(element);
+	let name = element.title;
+	let location = element.location;
+
+	let li = document.createElement('li');
+	let h3 = document.createElement('h3');
+	let a = document.createElement('div');
+
+	let imageDiv = document.createElement('div');
+	imageDiv.classList.add('channel__images')
+	let image1 = document.createElement('i'); 
+	image1.classList.add(`far`, `fa-star`); 
+	let image2 = document.createElement('i'); 
+	image2.classList.add(`fas`, `fa-angle-right`); 
+
+	a.classList.add('a');
+
+	a.innerHTML = name;
+	a.href = '#';
+	li.addEventListener('click', () => {
+			document.getElementById('channelName').innerHTML = name;
+			document.getElementById('channelLocation').innerHTML = `by: ${location}`;
+			document.getElementById('channelLocation').href = `http://what3words.com/${location}`;
+			
+			for (const li of channelList.getElementsByTagName('li')) {
+				li.classList.remove('selected');
+			}
+			li.classList.add('selected');
+	});
+	
+	h3.appendChild(a);
+	li.appendChild(h3);
+	imageDiv.appendChild(image1);
+	imageDiv.appendChild(image2);
+	li.appendChild(imageDiv);
+	channelList.appendChild(li);
+});
 
 
 function switchFavoChannel(){

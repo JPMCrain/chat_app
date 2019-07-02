@@ -27,6 +27,7 @@ ul,
 .a, 
 li,
 h2,
+h3,
 p, 
 .star__image, 
 .section1, 
@@ -40,7 +41,7 @@ p,
 .emoji__section,
 .emojis__button,
 .emojis,
-
+i,
 img {
 	background-color: snow;
 }
@@ -67,7 +68,7 @@ h1, .heading__wrapper ,#channelLocation {
 	padding: 10px;
 }
 
-ul, .list__wrapper, * {
+ul, * {
 	margin: 0;
 	padding: 0;
 }
@@ -78,23 +79,42 @@ li {
 	height: auto;
 	box-sizing: border-box;
 	border-bottom: 1px solid #1976D2;
+	height: 80px;
+	box-sizing: content-box;
+	flex-direction: row;
+	width: 530px;
+	line-height: 80px;
+	justify-content: space-between;
+	cursor: pointer;
 }
 
-.list__item {
-	display: flex;
-	flex-direction: row;
-	width: 550px;
-	justify-content: space-between;
+.a {
+	margin-left: 10px;
+	font-size: 24px;
+	text-decoration: none;
 }
 
 .channel__images {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 24px;
+	width: 45px;
 	align-self: center;
-
 }
 
-li:hover {
+.fas {
+	font-size: 30px;
+}
+
+li:hover, .selected {
 	border-left: 5px solid  #1976D2;
 	color: #1976D2;
+}
+
+a {
+ color: black;
+ text-decoration: none;
 }
 
 h2, p {
@@ -106,10 +126,6 @@ h2 {
 	font-size: 24px;
 }
 
-.a {
-	text-decoration: none;
-}
-
 span {
 	font-size: medium;
 }
@@ -119,13 +135,7 @@ em {
 	font-style: normal;
 }
 
-a {
-	color: black;
-}
 
-a:hover {
-	color: #1976D2;
-}
 
 .messages {
 	display: flex;
@@ -249,4 +259,8 @@ a:hover {
 #starImage {
 	position: absolute;
 	right: 20px;
+}
+
+#angleRight {
+	font-size: 30px;
 }
