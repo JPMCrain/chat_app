@@ -16,6 +16,20 @@ const channels = [
 	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
 ];
 
+let image1 = document.createElement('i'); 
+image1.classList.add(`far`, `fa-star`); 
+document.getElementById('starImage').appendChild(image1);
+
+image1.addEventListener('click', () => {
+	if(image1.classList.contains('fas')){
+		image1.classList.remove('fas', 'fa-star');
+		image1.classList.add('far', 'fa-star');
+	}else{
+		image1.classList.remove('far', 'fa-star');
+		image1.classList.add('fas', 'fa-star');
+	}
+});
+
 channels.forEach(function(element) {
 	console.log(element);
 	let name = element.title;
@@ -27,8 +41,10 @@ channels.forEach(function(element) {
 
 	let imageDiv = document.createElement('div');
 	imageDiv.classList.add('channel__images')
+
 	let image1 = document.createElement('i'); 
 	image1.classList.add(`far`, `fa-star`); 
+
 	let image2 = document.createElement('i'); 
 	image2.classList.add(`fas`, `fa-angle-right`); 
 
@@ -36,15 +52,25 @@ channels.forEach(function(element) {
 
 	a.innerHTML = name;
 	a.href = '#';
-	li.addEventListener('click', () => {
+	a.addEventListener('click', () => {
 			document.getElementById('channelName').innerHTML = name;
 			document.getElementById('channelLocation').innerHTML = `by: ${location}`;
 			document.getElementById('channelLocation').href = `http://what3words.com/${location}`;
-			
+			star.src = 'https://ip.lfe.mw.tum.de/sections/star-o.png';
 			for (const li of channelList.getElementsByTagName('li')) {
 				li.classList.remove('selected');
 			}
 			li.classList.add('selected');
+	});
+
+	image1.addEventListener('click', () => {
+		if(image1.classList.contains('fas')){
+			image1.classList.remove('fas', 'fa-star');
+			image1.classList.add('far', 'fa-star');
+		}else{
+			image1.classList.remove('far', 'fa-star');
+			image1.classList.add('fas', 'fa-star');
+		}
 	});
 	
 	h3.appendChild(a);
@@ -55,14 +81,6 @@ channels.forEach(function(element) {
 	channelList.appendChild(li);
 });
 
-
-function switchFavoChannel(){
-	if(star.src == 'https://ip.lfe.mw.tum.de/sections/star-o.png'){
-		star.src = 'https://ip.lfe.mw.tum.de/sections/star.png';
-	}else{
-		star.src = 'https://ip.lfe.mw.tum.de/sections/star-o.png';
-	}
-}
 
 function selectedTab(button){
 	let tab1 = document.getElementById('Tab1');

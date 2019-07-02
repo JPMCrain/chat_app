@@ -135,7 +135,9 @@ em {
 	font-style: normal;
 }
 
-
+i {
+	font-size: 24px;
+}
 
 .messages {
 	display: flex;
@@ -252,13 +254,15 @@ em {
 	border-bottom: 5px solid #1976D2;
 }
 
-#channelName, #starImage {
+#channelName, #starImage i {
 	background-color: #1976D2;
+	font-size: 30px;
 }
 
 #starImage {
 	position: absolute;
 	right: 20px;
+	background-color: #1976D2;
 }
 
 #angleRight {
