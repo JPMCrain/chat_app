@@ -16,17 +16,17 @@ const channels = [
 	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
 ];
 
-let image1 = document.createElement('i'); 
-image1.classList.add(`far`, `fa-star`); 
-document.getElementById('starImage').appendChild(image1);
+let topFavoStar = document.createElement('i'); 
+topFavoStar.classList.add(`far`, `fa-star`); 
+document.getElementById('starImage').appendChild(topFavoStar);
 
-image1.addEventListener('click', () => {
-	if(image1.classList.contains('fas')){
-		image1.classList.remove('fas', 'fa-star');
-		image1.classList.add('far', 'fa-star');
+topFavoStar.addEventListener('click', () => {
+	if(topFavoStar.classList.contains('fas')){
+		topFavoStar.classList.remove('fas', 'fa-star');
+		topFavoStar.classList.add('far', 'fa-star');
 	}else{
-		image1.classList.remove('far', 'fa-star');
-		image1.classList.add('fas', 'fa-star');
+		topFavoStar.classList.remove('far', 'fa-star');
+		topFavoStar.classList.add('fas', 'fa-star');
 	}
 });
 
@@ -36,14 +36,14 @@ channels.forEach(function(element) {
 	let location = element.location;
 
 	let li = document.createElement('li');
-	let h3 = document.createElement('h3');
+	let h2 = document.createElement('h2');
 	let a = document.createElement('div');
 
 	let imageDiv = document.createElement('div');
 	imageDiv.classList.add('channel__images')
 
-	let image1 = document.createElement('i'); 
-	image1.classList.add(`far`, `fa-star`); 
+	let favStarImage = document.createElement('i'); 
+	favStarImage.classList.add(`far`, `fa-star`); 
 
 	let image2 = document.createElement('i'); 
 	image2.classList.add(`fas`, `fa-angle-right`); 
@@ -52,7 +52,7 @@ channels.forEach(function(element) {
 
 	a.innerHTML = name;
 	a.href = '#';
-	a.addEventListener('click', () => {
+	li.addEventListener('click', () => {
 			document.getElementById('channelName').innerHTML = name;
 			document.getElementById('channelLocation').innerHTML = `by: ${location}`;
 			document.getElementById('channelLocation').href = `http://what3words.com/${location}`;
@@ -63,19 +63,21 @@ channels.forEach(function(element) {
 			li.classList.add('selected');
 	});
 
-	image1.addEventListener('click', () => {
-		if(image1.classList.contains('fas')){
-			image1.classList.remove('fas', 'fa-star');
-			image1.classList.add('far', 'fa-star');
+	favStarImage.addEventListener('click', (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		if(favStarImage.classList.contains('fas')){
+			favStarImage.classList.remove('fas', 'fa-star');
+			favStarImage.classList.add('far', 'fa-star');
 		}else{
-			image1.classList.remove('far', 'fa-star');
-			image1.classList.add('fas', 'fa-star');
+			favStarImage.classList.remove('far', 'fa-star');
+			favStarImage.classList.add('fas', 'fa-star');
 		}
 	});
 	
-	h3.appendChild(a);
-	li.appendChild(h3);
-	imageDiv.appendChild(image1);
+	h2.appendChild(a);
+	li.appendChild(h2);
+	imageDiv.appendChild(favStarImage);
 	imageDiv.appendChild(image2);
 	li.appendChild(imageDiv);
 	channelList.appendChild(li);

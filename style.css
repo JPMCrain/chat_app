@@ -27,7 +27,6 @@ ul,
 .a, 
 li,
 h2,
-h3,
 p, 
 .star__image, 
 .section1, 
@@ -103,7 +102,7 @@ li {
 	align-self: center;
 }
 
-.fas {
+.fa-angle-right {
 	font-size: 30px;
 }
 
@@ -117,7 +116,7 @@ a {
  text-decoration: none;
 }
 
-h2, p {
+p {
 	padding: 16px;
 }
 
@@ -267,4 +266,37 @@ i {
 
 #angleRight {
 	font-size: 30px;
+}
+
+.subitMessage__wrapper {
+	display: flex;
+	width: 50%;
+	justify-content: space-between;
+	align-items: center;
+	background-color: snow;
+	margin-left: 20px;
+}
+
+.messageInput {
+	width: 600px;
+	height: 30px;
+	font-size: 20px;
+	padding-left: 5px;
+	border: none;
+	outline: none;
+	background-color: snow;
+	border-bottom: 1px solid #1976D2;
+}
+
+.messageInput:hover {
+	border-bottom: 2px solid #1976D2;
+}
+
+.messageBTN {
+	border: none;
+	outline: none;
+}
+
+.messageBTN:hover {
+	color: #1976D2;
 }
