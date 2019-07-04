@@ -1,12 +1,21 @@
-let star = document.getElementById('starImage');
-let channelList = document.getElementById('channelList');
+let userPosition;
 
-function switchChannelName(channelName, channelLocation) {
-	document.getElementById('channelName').innerHTML = channelName;
-	document.getElementById('channelLocation').innerHTML = `by: ${channelLocation}`;
-	document.getElementById('channelLocation').href = `http://what3words.com/${channelLocation}`;
-	star.src = 'https://ip.lfe.mw.tum.de/sections/star-o.png';
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+			userPosition = position;
+		});
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
 }
+
+window.onload = () => {
+	getLocation();
+}
+
+//Channel pannel set up
+let channelList = document.getElementById('channelList');
 
 const channels = [
 	{title: '#Dog Box', location: 'eggs.jumpy.cheeses'},
@@ -15,20 +24,6 @@ const channels = [
 	{title: `#Food Guru's`, location: 'slang.themes.plotting'},
 	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
 ];
-
-let topFavoStar = document.createElement('i'); 
-topFavoStar.classList.add(`far`, `fa-star`); 
-document.getElementById('starImage').appendChild(topFavoStar);
-
-topFavoStar.addEventListener('click', () => {
-	if(topFavoStar.classList.contains('fas')){
-		topFavoStar.classList.remove('fas', 'fa-star');
-		topFavoStar.classList.add('far', 'fa-star');
-	}else{
-		topFavoStar.classList.remove('far', 'fa-star');
-		topFavoStar.classList.add('fas', 'fa-star');
-	}
-});
 
 channels.forEach(function(element) {
 	console.log(element);
@@ -83,34 +78,130 @@ channels.forEach(function(element) {
 	channelList.appendChild(li);
 });
 
+//Subit a message
+let message = document.getElementById('messageInput');
+let submit = document.getElementById('messageSubit');
 
-function selectedTab(button){
+function Message(createdBy, own, text, position) {
+	this.createdBy = createdBy;
+	this.createdOn = new Date();
+	this.expiresOn = "15min";
+	this.text = text;
+	this.own = own;
+
+	if(position) {
+		this.longitude = position.coords.longitude;
+		this.latitude = position.coords.latitude;
+	}
+}
+
+// function sendMessageToServer(message) {
+// 	// TODO later on
+// }
+
+function displayMessage(msg) {
+	let messageDiv = document.createElement('div');
+	if(!msg.own){
+		messageDiv.classList.add('message');
+	}else{
+		messageDiv.classList.add('first__message');
+	}
+
+	let messageTitle = document.createElement('div');
+	messageTitle.classList.add('message__title');
+	let what3words = document.createElement('h3');
+	let dateOfMsg = document.createElement('h3');
+	let timeLeft = document.createElement('h3');
+
+	what3words.innerHTML = msg.createdBy;
+	what3words.href = `http://what3words.com/${msg.createdBy}`;
+	let day = new Array( "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun" );
+	let month = new Array( "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+	dateOfMsg.innerHTML = `${day[msg.createdOn.getDay() - 1]}, ${month[msg.createdOn.getMonth()]}, ${msg.createdOn.getHours()}:${msg.createdOn.getMinutes()} `;
+	timeLeft.innerHTML = msg.expiresOn;
+	
+	let messageWrapper = document.createElement('div');
+	messageWrapper.classList.add('message__wrapper');
+	
+	let message = document.createElement('p');
+	let addTime = document.createElement('button');
+	addTime.classList.add('BTN5');
+	
+	message.innerHTML = msg.text;
+	addTime.innerHTML = "5 MIN"
+
+	messageTitle.appendChild(what3words);
+	messageTitle.appendChild(dateOfMsg);
+	messageTitle.appendChild(timeLeft);
+	messageWrapper.appendChild(message);
+	messageWrapper.appendChild(addTime);
+	messageDiv.appendChild(messageTitle);
+	messageDiv.appendChild(messageWrapper);
+	document.getElementById('messages').appendChild(messageDiv);
+	updateScroll();
+}
+
+function updateScroll(){
+	var element = document.getElementById("messages");
+	element.scrollTop = element.scrollHeight;
+}
+
+submit.addEventListener('click', (e) => {
+	e.preventDefault();
+	e.stopPropagation();
+	let text = message.value
+	if (!text && text.length < 5){
+		alert('message to short!!')
+	} else if (text.length > 141) {
+		alert('message is too long!!')
+	}
+	const newMessage = new Message('buzz.coverage.rank', true, text);
+	// sendMessageToServer(newMessage)
+	displayMessage(newMessage);
+});
+
+let topFavoStar = document.createElement('i'); 
+topFavoStar.classList.add(`far`, `fa-star`); 
+document.getElementById('starImage').appendChild(topFavoStar);
+
+topFavoStar.addEventListener('click', () => {
+	if(topFavoStar.classList.contains('fas')) {
+		topFavoStar.classList.remove('fas', 'fa-star');
+		topFavoStar.classList.add('far', 'fa-star');
+	} else {
+		topFavoStar.classList.remove('far', 'fa-star');
+		topFavoStar.classList.add('fas', 'fa-star');
+	}
+});
+
+//Show selected Tab in Channel Pannel
+function selectedTab(button) {
 	let tab1 = document.getElementById('Tab1');
 	let tab2 = document.getElementById('Tab2');
 	let tab3 = document.getElementById('Tab3');
 
-	if(button == 'tab1'){
+	if(button == 'tab1') {
 		tab1.classList.add('tabBtn__active');
 		tab2.classList.remove('tabBtn__active');
 		tab3.classList.remove('tabBtn__active');
-	}else if(button == 'tab2'){
+	} else if(button == 'tab2') {
 		tab1.classList.remove('tabBtn__active');
 		tab2.classList.add('tabBtn__active');
 		tab3.classList.remove('tabBtn__active');
-	}else if (button == 'tab3'){
+	} else if (button == 'tab3') {
 		tab1.classList.remove('tabBtn__active');
 		tab2.classList.remove('tabBtn__active');
 		tab3.classList.add('tabBtn__active');
 	}
 }
 
-
-function toggleEmoji(){
+// Toggle Emoji Button
+function toggleEmoji() {
 	let emojis = document.getElementById('emojis');
 
 	if(emojis.style.display == 'none'){
 		emojis.style.display = 'block';
-	}else {
+	} else {
 		emojis.style.display = 'none';
 	}
 }

@@ -143,6 +143,7 @@ i {
 	flex-direction: column;
 	overflow: auto;
 	height: 520px;
+	padding-bottom: 10px;
 }
 
 .first__message {
