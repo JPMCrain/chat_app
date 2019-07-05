@@ -102,10 +102,16 @@ function Message(createdBy, own, text, position) {
 
 function displayMessage(msg) {
 	let messageDiv = document.createElement('div');
+	let messageArrowDiv = document.createElement('div');
+	let messageArrow = document.createElement('div');
 	if(!msg.own){
 		messageDiv.classList.add('message');
+		messageArrowDiv.classList.add('other__message');
+		messageArrow.classList.add('arrow-left');
 	}else{
 		messageDiv.classList.add('first__message');
+		messageArrowDiv.classList.add('own__message');
+		messageArrow.classList.add('arrow-right');
 	}
 
 	let messageTitle = document.createElement('div');
@@ -131,16 +137,18 @@ function displayMessage(msg) {
 	addTime.classList.add('BTN5');
 	
 	message.innerHTML = msg.text;
-	addTime.innerHTML = "+5MIN"
+	addTime.innerHTML = "+5 MIN"
 
 	messageTitle.appendChild(what3words);
 	messageTitle.appendChild(dateOfMsg);
 	timeLeft.appendChild(em);
 	messageTitle.appendChild(timeLeft);
+	messageArrowDiv.appendChild(messageWrapper);
+	messageArrowDiv.appendChild(messageArrow);
 	messageWrapper.appendChild(message);
 	messageWrapper.appendChild(addTime);
 	messageDiv.appendChild(messageTitle);
-	messageDiv.appendChild(messageWrapper);
+	messageDiv.appendChild(messageArrowDiv);
 	document.getElementById('messages').appendChild(messageDiv);
 	updateScroll();
 }
@@ -156,8 +164,6 @@ submit.addEventListener('click', (e) => {
 	let text = message.value
 	if (!text || text.length < 5){
 		alert('message to short!!')
-	} else if (text.length > 141) {
-		alert('message is too long!!')
 	} else {
 		const newMessage = new Message('buzz.coverage.rank', true, text);
 		// sendMessageToServer(newMessage)

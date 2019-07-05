@@ -17,6 +17,8 @@
 .section1 {
 	width: 40%;
 	overflow: auto;
+	box-shadow: 10px 0 10px -10px black;
+	position: relative;
 }
 
 .section2 {
@@ -38,7 +40,6 @@ p,
 .message__wrapper,
 .footer__wrapper,
 .emoji__section,
-.emojis__button,
 .emojis,
 i,
 img {
@@ -54,17 +55,19 @@ img {
 
 h1, .heading__wrapper ,#channelLocation {
 	display: flex;
-	background-color: #1976D2;
+	background-color:#3f51b5;
 	align-items: center;
 	color: snow;
 	height: 80px;
 }
 
 .logo {
-	width: 56px;
-	height: 56px;
-	background-color: #1976D2;
-	padding: 10px;
+	width: 60px;
+	height: 60px;
+	background-color:#3f51b5;
+	padding-left: 20px;
+	margin-top: 20px;
+	
 }
 
 ul, * {
@@ -77,8 +80,8 @@ li {
 	list-style-type: none;
 	height: auto;
 	box-sizing: border-box;
-	border-bottom: 1px solid #1976D2;
-	height: 80px;
+	border-bottom: 1px solid #3f51b5;
+	height: 60px;
 	box-sizing: content-box;
 	flex-direction: row;
 	width: 530px;
@@ -87,9 +90,30 @@ li {
 	cursor: pointer;
 }
 
+.addBTN {
+	width: 60px;
+	height: 60px;
+	border-radius: 60px;
+	font-size: 30px;
+	font-weight: 600;
+	background-color: #CDDC39;
+	border: none;
+	outline: none;
+	position: absolute;
+	bottom: 30px;
+	right: 30px;
+	box-shadow: 0 10px 20px -8px black;
+}
+
+.addBTN:hover {
+	color: #3f51b5;
+}
+
 .a {
 	margin-left: 10px;
 	font-size: 24px;
+	height: 60px;
+	line-height: 60px;
 	text-decoration: none;
 }
 
@@ -107,8 +131,8 @@ li {
 }
 
 li:hover, .selected {
-	border-left: 5px solid  #1976D2;
-	color: #1976D2;
+	border-left: 5px solid  #3f51b5;
+	color: #3f51b5;
 }
 
 a {
@@ -147,12 +171,13 @@ i {
 }
 
 .first__message {
+	padding-right: 15px;
 	align-self: flex-end;
 	width: 80%;
 }
 
 .message {
-	padding-left: 25px;
+	padding-left: 15px;
 	width: 80%;
 }
 
@@ -165,24 +190,77 @@ i {
 
 .message__wrapper {
 	display: flex;
+	width: 96%;
 	justify-content: space-between;
+	overflow-wrap: break-word;
+	z-index: 1;
 }
 
+.own__message, .other__message {
+	display: flex;
+}
+
+.own__message {
+	position: relative;
+}
+
+.other__message {
+	position: relative;
+	flex-direction: row-reverse;
+}
+
+.arrow-right, .arrow-left{
+  width: 0; 
+	height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+	border-bottom: 20px solid snow;
+}
+
+.arrow-right {
+	transform: rotate(-45deg);
+	transform-origin: 0 0;
+	position: absolute;
+	top: 14px;
+	right: 0;
+}
+
+.arrow-left {
+	transform: rotate(45deg);
+	transform-origin: 0 0;
+	position: absolute;
+	top: -14px;
+	left: 12px;
+}
+
+
 .BTN5 {
+	padding-left: 16px;
+	padding-right: 16px;
+	margin: 8px;
+	text-align: center;
 	align-self: flex-end;
 	background-color: #CDDC39;
 	text-transform: uppercase;
-	width: 50px;
-	height: 25px;
+	outline: none;
+	border: none;
+	border-radius: 5px;
+	width: 80px;
+	height: 30px;
+	font-weight: 600;
 }
 
 .h3Hover:hover {
-	color: #1976D2;
+	color: #3f51b5;
 	cursor: pointer;
 }
 
 a:hover {
-	color: #1976D2;
+	color: #3f51b5;
+}
+
+h3 {
+	z-index: 1;
 }
 
 .footer {
@@ -192,12 +270,13 @@ a:hover {
 
 .footer__wrapper {
 	display: flex;
+	align-items: center;
 }
 
 .emoji__section {
 	display: flex;
 	flex-direction: column-reverse;
-	height: 80px;
+	height: 60px;
 }
 .emojis {
 	width: 200px;
@@ -205,9 +284,10 @@ a:hover {
 	overflow: auto;
 	padding: 5px;
 	box-sizing: content-box;
-	margin-left: 25px;
+	margin-left: 40px;
 	position: absolute;
-	bottom: 50px;
+	bottom: 60px;
+	border-radius: 10px;
 	z-index: 2;
 	border: 1px solid black;
 }
@@ -215,17 +295,22 @@ a:hover {
 .emojis__button {
 	border: none;
 	outline: none;
-	border-radius: 100%;
-	margin-left: 5px;
-	margin-bottom: 15px;
+	width: 50px;
+	height: 30px;
+	background-color:#3f51b5;
+	color: snow;
+	border-radius: 5px;
+	margin-left: 10px;
+	margin-bottom: 10px;
 }
 
-.emoji__image {
-	border-radius: 100%;
+.fa-smile {
+	font-size: 18px;
+	background-color:#3f51b5;
 }
 
-.emoji__image:hover {
-	background-color: yellow;
+.fa-smile:hover {
+	color:#cddc39;
 }
 
 .tabBtn {
@@ -237,16 +322,19 @@ a:hover {
 	align-items: center;
 	width: 33%;
 	height: 80px;
+	font-size: 16px;
 }
 
 .tab__buttons {
+	box-shadow: 8px 0 10px -10px black;
 	display: flex;
 	width: 40%;
+	z-index: 1;
 }
 
 .tabBtn:hover {
 	color: #1976D2;
-	border-bottom: 5px solid #1976D2;
+	border-bottom: 5px solid #3f51b5;
 }
 
 .tabBtn__active {
@@ -258,19 +346,19 @@ a:hover {
 	align-items: center;
 	width: 33%;
 	height: 80px;
-	color: #1976D2;
-	border-bottom: 5px solid #1976D2;
+	color: #3f51b5;;
+	border-bottom: 5px solid #3f51b5;
 }
 
 #channelName, #starImage i {
-	background-color: #1976D2;
+	background-color: #3f51b5;
 	font-size: 30px;
 }
 
 #starImage {
 	position: absolute;
 	right: 20px;
-	background-color: #1976D2;
+	background-color: #3f51b5;
 }
 
 #angleRight {
@@ -279,7 +367,9 @@ a:hover {
 
 .subitMessage__wrapper {
 	display: flex;
-	width: 50%;
+	width: 53%;
+	height: 60px;
+	margin-top: 10px;
 	justify-content: space-between;
 	align-items: center;
 	background-color: snow;
@@ -294,18 +384,27 @@ a:hover {
 	border: none;
 	outline: none;
 	background-color: snow;
-	border-bottom: 1px solid #1976D2;
+	border-bottom: 1px solid #3f51b5;
 }
 
 .messageInput:hover {
-	border-bottom: 2px solid #1976D2;
+	border-bottom: 2px solid #3f51b5;
 }
 
 .messageBTN {
 	border: none;
 	outline: none;
+	width: 50px;
+	height: 30px;
+	background-color: #CDDC39;
+	border-radius: 5px;
+}
+
+.fa-arrow-right {
+	background-color: #CDDC39;
 }
 
 .messageBTN:hover {
-	color: #1976D2;
+	color: #3f51b5;
 }
+

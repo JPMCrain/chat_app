@@ -23,6 +23,7 @@
 				<ul id='channelList'>
 
 				</ul>
+				<button class="addBTN">+</button>
 			</div>
 		</div>
 
@@ -42,10 +43,12 @@
 						<h3>Tues, June 25th, 15:00</h3>
 						<h3><em>8 mins left</em></h3>
 					</div>
-					<div class="message__wrapper">
-						<p>When is a goat hairy on the outside and on the inside at the same time?
-							<br /> When standing on the barn's doorway.</p>
-						<button class="BTN5">+5min</button>
+					<div class="own__message">
+						<div class="message__wrapper">
+							<p>When is a goat hairy on the outside and on the inside at the same time?</p>
+							<button class="BTN5">+5 min</button>
+						</div>
+						<div class="arrow-right"></div>
 					</div>
 				</div>
 				<div class="message">
@@ -54,10 +57,12 @@
 						<h3>Tues, June 25th, 15:10</h3>
 						<h3><em>16 mins left</em></h3>
 					</div>
-					<div class="message__wrapper">
-						<p>Where did you learn how to make ice cream?
-							<br /> At sundae school.</p>
-						<button class="BTN5">+5min</button>
+					<div class="other__message">
+						<div class="message__wrapper">
+							<p>Where did you learn how to make ice cream? At sundae school.</p>
+							<button class="BTN5">+5 min</button>
+						</div>
+						<div class="arrow-left"></div>
 					</div>
 				</div>
 				<div class="message">
@@ -66,10 +71,12 @@
 						<h3>Tues, June 25th,15:16</h3>
 						<h3><em>2 mins left</em></h3>
 					</div>
-					<div class="message__wrapper">
-						<p>What do you call a cake that was made by a prostitute?
-							<br /> Hoe-made.</p>
-						<button class="BTN5">+5min</button>
+					<div class="other__message">
+						<div class="message__wrapper">
+							<p>What do you call a cake that was made by a prostitute? Hoe-made.</p>
+							<button class="BTN5">+5 min</button>
+						</div>
+						<div class="arrow-left"></div>
 					</div>
 				</div>
 				<div class="message">
@@ -78,9 +85,12 @@
 						<h3>Tues, June 25th, 15:20</h3>
 						<h3><em>9 mins left</em></h3>
 					</div>
-					<div class="message__wrapper">
-						<p>Dogs can't do MRI scans, but catscan.</p>
-						<button class="BTN5">+5min</button>
+					<div class="other__message">
+						<div class="message__wrapper">
+							<p>Dogs can't do MRI scans, but catscan.</p>
+							<button class="BTN5">+5 min</button>
+						</div>
+						<div class="arrow-left"></div>
 					</div>
 				</div>
 				<div class="message">
@@ -89,10 +99,12 @@
 						<h3>Tues, June 25th, 15:35</h3>
 						<h3><em>10 mins left</em></h3>
 					</div>
-					<div class="message__wrapper">
-						<p>Have you heard that there's a new restaurant on the moon?
-							<br /> It has great food, but zero atmosphere.</p>
-						<button class="BTN5">+5min</button>
+					<div class="other__message">
+						<div class="message__wrapper">
+							<p>Have you heard that there's a new restaurant on the moon?</p>
+							<button class="BTN5">+5 min</button>
+						</div>
+						<div class="arrow-left"></div>
 					</div>
 				</div>
 				<div class="message">
@@ -101,10 +113,12 @@
 						<h3>Tues, June 25th, 15:45</h3>
 						<h3><em>30 mins left</em></h3>
 					</div>
-					<div class="message__wrapper">
-						<p>What do you call a horse that likes to moves around all the time?
-							<br /> Unstable.</p>
-						<button class="BTN5">+5min</button>
+					<div class="other__message">
+						<div class="message__wrapper">
+							<p>What do you call a horse that likes to moves around all the time?</p>
+							<button class="BTN5">+5 min</button>
+						</div>
+						<div class="arrow-left"></div>
 					</div>
 				</div>
 			</div>
@@ -115,19 +129,21 @@
 		<footer>
 			<div class="footer__wrapper">
 				<div class="tab__buttons">
-					<button id="Tab1" onclick="selectedTab('tab1');" class="tabBtn"><img class="tab__image"
-							src="https://ip.lfe.mw.tum.de/sections/lightbulb-o.png" alt="">
-						New</button>
-					<button id="Tab2" onclick="selectedTab('tab2');" class="tabBtn"><img class="tab__image"
-							src="https://ip.lfe.mw.tum.de/sections/fire.png" alt="">
-						Trending</button>
-					<button id="Tab3" onclick="selectedTab('tab3');" class="tabBtn"><img class="tab__image"
-							src="https://ip.lfe.mw.tum.de/sections/star.png" alt="">
-						Favourites</button>
+					<button id="Tab1" onclick="selectedTab('tab1');" class="tabBtn">
+						<div class="tab__image"><i class="far fa-lightbulb"></i></div>
+						New
+					</button>
+					<button id="Tab2" onclick="selectedTab('tab2');" class="tabBtn">
+						<div class="tab__image"><i class="fas fa-fire"></i></div>
+						Trending
+					</button>
+					<button id="Tab3" onclick="selectedTab('tab3');" class="tabBtn">
+						<div class="tab__image"><i class="fas fa-star"></i></div>
+						Favourites
+					</button>
 				</div>
 				<div class="emoji__section">
-					<button onclick="toggleEmoji();" class="emojis__button"><img class="emoji__image"
-							src="http://ip.lfe.mw.tum.de/sections/smile-o.png"></button>
+					<button onclick="toggleEmoji();" class="emojis__button"><i class="far fa-smile"></i></button>
 					<div id="emojis" class="emojis" style="display: none">
 						&#x1F601; &#x1F602;
 						&#x1F603; &#x1F604;
@@ -135,7 +151,7 @@
 					</div>
 				</div>
 				<div class="subitMessage__wrapper">
-					<input id="messageInput" class="messageInput" type="text" placeholder="message?">
+					<input id="messageInput" class="messageInput" type="text" placeholder="message?" maxlength="140">
 					<button id="messageSubit" class="messageBTN"><i class="fas fa-arrow-right"></i></button>
 				</div>
 			</div>
