@@ -124,6 +124,7 @@ li {
 
 .channel__images {
 	display: flex;
+	margin-right: 10px;
 	justify-content: space-between;
 	align-items: center;
 	font-size: 24px;

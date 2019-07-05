@@ -57,7 +57,6 @@ channels.forEach(function(element) {
 			document.getElementById('channelName').innerHTML = name;
 			document.getElementById('channelLocation').innerHTML = `by: ${location}`;
 			document.getElementById('channelLocation').href = `http://what3words.com/${location}`;
-			star.src = 'https://ip.lfe.mw.tum.de/sections/star-o.png';
 			for (const li of channelList.getElementsByTagName('li')) {
 				li.classList.remove('selected');
 			}
