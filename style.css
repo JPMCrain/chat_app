@@ -16,7 +16,6 @@
 
 .section1 {
 	width: 40%;
-	overflow: auto;
 	box-shadow: 10px 0 10px -10px black;
 	position: relative;
 }
@@ -41,6 +40,7 @@ p,
 .footer__wrapper,
 .emoji__section,
 .emojis,
+.list__wrapper,
 i,
 img {
 	background-color: snow;
@@ -68,6 +68,11 @@ h1, .heading__wrapper ,#channelLocation {
 	padding-left: 20px;
 	margin-top: 20px;
 	
+}
+
+.list__wrapper {
+	height: 88%;
+	overflow: auto;
 }
 
 ul, * {
@@ -168,6 +173,20 @@ i {
 	overflow: auto;
 	height: 520px;
 	padding-bottom: 10px;
+}
+
+.messages::-webkit-scrollbar, .list__wrapper::-webkit-scrollbar{
+	width: 15px;
+}
+
+.messages::-webkit-scrollbar-track, .list__wrapper::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+.messages::-webkit-scrollbar-thumb, .list__wrapper::-webkit-scrollbar-thumb  {
+	border-radius: 15px;
+	background-color: darkgrey;
+	outline: 1px solid slategrey;
 }
 
 .first__message {
@@ -329,7 +348,6 @@ h3 {
 	box-shadow: 8px 0 10px -10px black;
 	display: flex;
 	width: 40%;
-	z-index: 1;
 }
 
 .tabBtn:hover {
@@ -351,6 +369,7 @@ h3 {
 }
 
 #channelName, #starImage i {
+	margin-left: 10px;
 	background-color: #3f51b5;
 	font-size: 30px;
 }

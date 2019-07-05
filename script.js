@@ -24,6 +24,11 @@ const channels = [
 	{title: '#Book Lovers', location: 'drop.protest.powers'},
 	{title: `#Food Guru's`, location: 'slang.themes.plotting'},
 	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
+	{title: '#Dog Box', location: 'eggs.jumpy.cheeses'},
+	{title: '#Cheesy Jokes', location: 'buzz.coverage.rank'},
+	{title: '#Book Lovers', location: 'drop.protest.powers'},
+	{title: `#Food Guru's`, location: 'slang.themes.plotting'},
+	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
 ];
 
 channels.forEach(function(element) {
