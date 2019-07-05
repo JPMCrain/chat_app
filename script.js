@@ -12,6 +12,7 @@ function getLocation() {
 
 window.onload = () => {
 	getLocation();
+	updateScroll();
 }
 
 //Channel pannel set up
@@ -85,7 +86,7 @@ let submit = document.getElementById('messageSubit');
 function Message(createdBy, own, text, position) {
 	this.createdBy = createdBy;
 	this.createdOn = new Date();
-	this.expiresOn = "15min";
+	this.expiresOn = 15;
 	this.text = text;
 	this.own = own;
 
@@ -110,15 +111,17 @@ function displayMessage(msg) {
 	let messageTitle = document.createElement('div');
 	messageTitle.classList.add('message__title');
 	let what3words = document.createElement('h3');
+	what3words.classList.add('h3Hover');
 	let dateOfMsg = document.createElement('h3');
 	let timeLeft = document.createElement('h3');
+	let em = document.createElement('em');
 
 	what3words.innerHTML = msg.createdBy;
 	what3words.href = `http://what3words.com/${msg.createdBy}`;
 	let day = new Array( "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun" );
 	let month = new Array( "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 	dateOfMsg.innerHTML = `${day[msg.createdOn.getDay() - 1]}, ${month[msg.createdOn.getMonth()]}, ${msg.createdOn.getHours()}:${msg.createdOn.getMinutes()} `;
-	timeLeft.innerHTML = msg.expiresOn;
+	em.innerHTML = `${msg.expiresOn} mins left`;
 	
 	let messageWrapper = document.createElement('div');
 	messageWrapper.classList.add('message__wrapper');
@@ -128,10 +131,11 @@ function displayMessage(msg) {
 	addTime.classList.add('BTN5');
 	
 	message.innerHTML = msg.text;
-	addTime.innerHTML = "5 MIN"
+	addTime.innerHTML = "+5MIN"
 
 	messageTitle.appendChild(what3words);
 	messageTitle.appendChild(dateOfMsg);
+	timeLeft.appendChild(em);
 	messageTitle.appendChild(timeLeft);
 	messageWrapper.appendChild(message);
 	messageWrapper.appendChild(addTime);
@@ -150,14 +154,15 @@ submit.addEventListener('click', (e) => {
 	e.preventDefault();
 	e.stopPropagation();
 	let text = message.value
-	if (!text && text.length < 5){
+	if (!text || text.length < 5){
 		alert('message to short!!')
 	} else if (text.length > 141) {
 		alert('message is too long!!')
+	} else {
+		const newMessage = new Message('buzz.coverage.rank', true, text);
+		// sendMessageToServer(newMessage)
+		displayMessage(newMessage);
 	}
-	const newMessage = new Message('buzz.coverage.rank', true, text);
-	// sendMessageToServer(newMessage)
-	displayMessage(newMessage);
 });
 
 let topFavoStar = document.createElement('i'); 

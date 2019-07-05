@@ -176,6 +176,14 @@ i {
 	height: 25px;
 }
 
+.h3Hover:hover {
+	color: #1976D2;
+	cursor: pointer;
+}
+
+a:hover {
+	color: #1976D2;
+}
 
 .footer {
 	width: 100%;
