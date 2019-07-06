@@ -18,18 +18,7 @@ window.onload = () => {
 //Channel pannel set up
 let channelList = document.getElementById('channelList');
 
-const channels = [
-	{title: '#Dog Box', location: 'eggs.jumpy.cheeses'},
-	{title: '#Cheesy Jokes', location: 'buzz.coverage.rank'},
-	{title: '#Book Lovers', location: 'drop.protest.powers'},
-	{title: `#Food Guru's`, location: 'slang.themes.plotting'},
-	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
-	{title: '#Dog Box', location: 'eggs.jumpy.cheeses'},
-	{title: '#Cheesy Jokes', location: 'buzz.coverage.rank'},
-	{title: '#Book Lovers', location: 'drop.protest.powers'},
-	{title: `#Food Guru's`, location: 'slang.themes.plotting'},
-	{title: '#Movie Fanatics', location: 'pointer.grudges.shock'},
-];
+const channels = [];
 
 channels.forEach(function(element) {
 	console.log(element);
@@ -175,26 +164,11 @@ submit.addEventListener('click', (e) => {
 	}
 });
 
-let topFavoStar = document.createElement('i'); 
-topFavoStar.classList.add(`far`, `fa-star`); 
-document.getElementById('starImage').appendChild(topFavoStar);
-
-topFavoStar.addEventListener('click', () => {
-	if(topFavoStar.classList.contains('fas')) {
-		topFavoStar.classList.remove('fas', 'fa-star');
-		topFavoStar.classList.add('far', 'fa-star');
-	} else {
-		topFavoStar.classList.remove('far', 'fa-star');
-		topFavoStar.classList.add('fas', 'fa-star');
-	}
-});
-
+let tab1 = document.getElementById('Tab1');
+let tab2 = document.getElementById('Tab2');
+let tab3 = document.getElementById('Tab3');
 //Show selected Tab in Channel Pannel
 function selectedTab(button) {
-	let tab1 = document.getElementById('Tab1');
-	let tab2 = document.getElementById('Tab2');
-	let tab3 = document.getElementById('Tab3');
-
 	if(button == 'tab1') {
 		tab1.classList.add('tabBtn__active');
 		tab2.classList.remove('tabBtn__active');
