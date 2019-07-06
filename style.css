@@ -113,6 +113,22 @@ li {
 	color: #3f51b5;
 }
 
+.addBTN__active {
+	width: 60px;
+	height: 60px;
+	border-radius: 60px;
+	font-size: 30px;
+	font-weight: 600;
+	background-color: #3f51b5;
+	border: none;
+	outline: none;
+	position: absolute;
+	bottom: 30px;
+	right: 30px;
+	box-shadow: 0 10px 20px -8px black;
+	color: #cddc39;
+}
+
 .a {
 	margin-left: 10px;
 	font-size: 24px;
@@ -426,4 +442,61 @@ h3 {
 
 #angleRight {
 	font-size: 30px;
+}
+
+#createChannel {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	bottom: 5px;
+	right: 10px;
+	width: 80px;
+	height: 50px;
+	background-color: snow;
+}
+
+.addChannelInput {
+	width: 650px;
+	height: 25px;
+	text-align: center;
+	background-color: snow;
+	padding-left: 5px;
+	font-size: 0.6em;
+	border: none;
+	outline: none;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+
+.abortBTN {
+	width: 70px;
+	height: 30px;
+	border-radius: 15px;
+	background-color: #3f51b5;
+	color: snow;
+	font-weight: 600;
+	border: none;
+	outline: none;
+}
+
+.abortBTN:hover {
+	background-color: #1976D2;
+	text-decoration: underline;
+}
+
+.createBTN {
+	width: 70px;
+	height: 30px;
+	border-radius: 5px;
+	background-color: #cddc39;
+	font-weight: 600;
+	border: none;
+	outline: none;
+}
+
+.createBTN:hover {
+	background-color: #3f51b5;
+	color: #cddc39;
+	text-decoration: underline;
 }

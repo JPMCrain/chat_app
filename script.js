@@ -11,15 +11,78 @@ function getLocation() {
 }
 
 window.onload = () => {
-	getLocation();
+	//getLocation();
 	updateScroll();
 }
 
 //Channel pannel set up
+let addChannel = document.getElementById('addBTN');
+let createChannel = document.getElementById('createChannel');
 let channelList = document.getElementById('channelList');
+let channelName = document.getElementById('channelName');
+let channelLocation = document.getElementById('channelLocation');
+let starImage = document.getElementById('starImage');
+let input = document.createElement('input');
+input.classList.add('addChannelInput');
+let abort = document.createElement('button');
+abort.classList.add('abortBTN');
+let create = document.createElement('button');
+create.classList.add('createBTN');
 
 const channels = [];
 
+// new channel constructor object
+function NewChannel(channelName, location){
+	this.channelName = channelName;
+	this.location = location; //varied.groom.outliving
+	this.favourite = false;
+	this.messages = [];
+}
+
+// display the add channel input section
+function displayAddChannelInput() {
+	input.placeholder = '#Channel Name?';
+	input.maxLength = 25;
+	abort.innerHTML = 'x ABORT';
+	create.innerHTML = 'CREATE';
+
+	channelName.appendChild(input);
+	starImage.appendChild(abort);
+	createChannel.style.display = 'flex';
+	createChannel.appendChild(create);
+}
+
+// remove channel input section
+function removeAddChannelInput() {
+	channelName.removeChild(input);
+	starImage.removeChild(abort);
+	createChannel.style.display = 'none';
+	createChannel.removeChild(create);
+}
+
+// abort removing channel input section
+abort.addEventListener('click', () => {
+	removeAddChannelInput();
+	addChannel.classList.remove('addBTN__active');
+	addChannel.classList.add('addBTN');
+})
+
+// display channel input section and abort removing channel input section
+addChannel.addEventListener('click', () => {
+	console.log('add channel just been clicked');
+	if(addChannel.classList.contains('addBTN')){
+		addChannel.classList.remove('addBTN');
+		addChannel.classList.add('addBTN__active');
+		displayAddChannelInput();
+	}else{
+		addChannel.classList.remove('addBTN__active');
+		addChannel.classList.add('addBTN');
+		removeAddChannelInput();
+	}
+	
+});
+
+//display channel list
 channels.forEach(function(element) {
 	console.log(element);
 	let name = element.title;
@@ -43,9 +106,9 @@ channels.forEach(function(element) {
 	a.innerHTML = name;
 	a.href = '#';
 	li.addEventListener('click', () => {
-			document.getElementById('channelName').innerHTML = name;
-			document.getElementById('channelLocation').innerHTML = `by: ${location}`;
-			document.getElementById('channelLocation').href = `http://what3words.com/${location}`;
+			channelName.innerHTML = name;
+			channelLocation.innerHTML = `by: ${location}`;
+			channelLocation.href = `http://what3words.com/${location}`;
 			for (const li of channelList.getElementsByTagName('li')) {
 				li.classList.remove('selected');
 			}
