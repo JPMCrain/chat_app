@@ -22,6 +22,12 @@ let channelList = document.getElementById('channelList');
 let channelName = document.getElementById('channelName');
 let channelLocation = document.getElementById('channelLocation');
 let starImage = document.getElementById('starImage');
+let headerDiv = document.createElement('div');
+headerDiv.classList.add('addChannelInput__wrapper');
+let inputDiv = document.createElement('div');
+inputDiv.classList.add('addChannel');
+let abortDiv = document.createElement('div');
+abortDiv.classList.add('addChannel');
 let input = document.createElement('input');
 input.classList.add('addChannelInput');
 let abort = document.createElement('button');
@@ -29,111 +35,138 @@ abort.classList.add('abortBTN');
 let create = document.createElement('button');
 create.classList.add('createBTN');
 
-const channels = [];
+const channels = {};
 
 // new channel constructor object
-function NewChannel(channelName, location){
+function NewChannel(channelId, channelName){
+	this.channelId = channelId
 	this.channelName = channelName;
-	this.location = location; //varied.groom.outliving
+	this.location = "varied.groom.outliving"
 	this.favourite = false;
+	this.date = new Date();
 	this.messages = [];
 }
 
 // display the add channel input section
 function displayAddChannelInput() {
 	input.placeholder = '#Channel Name?';
+	input.id = "newChannelInput";
+	input.minLength = 1;
 	input.maxLength = 25;
 	abort.innerHTML = 'x ABORT';
 	create.innerHTML = 'CREATE';
-
-	channelName.appendChild(input);
-	starImage.appendChild(abort);
+	
+	inputDiv.appendChild(input);
+	abortDiv.appendChild(abort);
 	createChannel.style.display = 'flex';
 	createChannel.appendChild(create);
+	headerDiv.appendChild(inputDiv);
+	headerDiv.appendChild(abortDiv);
+	document.getElementById('header2').appendChild(headerDiv);
 }
 
 // remove channel input section
 function removeAddChannelInput() {
-	channelName.removeChild(input);
-	starImage.removeChild(abort);
+	input.value = "";
 	createChannel.style.display = 'none';
 	createChannel.removeChild(create);
+	document.getElementById('header2').removeChild(headerDiv);
 }
+
+// create new channel
+create.addEventListener('click', (e) => {
+	e.preventDefault();
+	e.stopPropagation();
+	var channelId = Object.keys(channels).length + 1;
+	let newChannelName = `#${document.getElementById('newChannelInput').value}`;
+	let newChannel = new NewChannel(channelId, newChannelName);
+	channels[channelId] = newChannel 
+	displayChannelList();
+	removeAddChannelInput();
+	addChannel.classList.remove('addBTN__active');
+	addChannel.classList.add('addBTN');
+});
 
 // abort removing channel input section
 abort.addEventListener('click', () => {
 	removeAddChannelInput();
 	addChannel.classList.remove('addBTN__active');
 	addChannel.classList.add('addBTN');
-})
+});
 
 // display channel input section and abort removing channel input section
 addChannel.addEventListener('click', () => {
-	console.log('add channel just been clicked');
 	if(addChannel.classList.contains('addBTN')){
 		addChannel.classList.remove('addBTN');
 		addChannel.classList.add('addBTN__active');
+		channelName.innerHTML = "";
+		channelLocation.innerHTML = "";
 		displayAddChannelInput();
 	}else{
 		addChannel.classList.remove('addBTN__active');
 		addChannel.classList.add('addBTN');
 		removeAddChannelInput();
-	}
-	
+	}	
 });
 
-//display channel list
-channels.forEach(function(element) {
-	console.log(element);
-	let name = element.title;
-	let location = element.location;
+// display channel list and refresh 
+function displayChannelList() {
+	channelList.innerHTML = null; 
 
-	let li = document.createElement('li');
-	let h2 = document.createElement('h2');
-	let a = document.createElement('div');
+	for (const channelId in channels) {
+		let channel = channels[channelId];
+		let name = channel.channelName;
+		let location = channel.location;
+		let li = document.createElement('li');
+		let h2 = document.createElement('h2');
+		let a = document.createElement('div');
 
-	let imageDiv = document.createElement('div');
-	imageDiv.classList.add('channel__images')
+		let imageDiv = document.createElement('div');
+		imageDiv.classList.add('channel__images')
 
-	let favStarImage = document.createElement('i'); 
-	favStarImage.classList.add(`far`, `fa-star`); 
+		let favStarImage = document.createElement('i'); 
+		favStarImage.classList.add(`far`, `fa-star`); 
 
-	let image2 = document.createElement('i'); 
-	image2.classList.add(`fas`, `fa-angle-right`); 
+		let image2 = document.createElement('i'); 
+		image2.classList.add(`fas`, `fa-angle-right`); 
 
-	a.classList.add('a');
+		a.classList.add('a');
 
-	a.innerHTML = name;
-	a.href = '#';
-	li.addEventListener('click', () => {
-			channelName.innerHTML = name;
-			channelLocation.innerHTML = `by: ${location}`;
-			channelLocation.href = `http://what3words.com/${location}`;
-			for (const li of channelList.getElementsByTagName('li')) {
-				li.classList.remove('selected');
-			}
-			li.classList.add('selected');
-	});
-
-	favStarImage.addEventListener('click', (e) => {
-		e.preventDefault();
-		e.stopPropagation();
-		if(favStarImage.classList.contains('fas')){
-			favStarImage.classList.remove('fas', 'fa-star');
-			favStarImage.classList.add('far', 'fa-star');
-		}else{
-			favStarImage.classList.remove('far', 'fa-star');
-			favStarImage.classList.add('fas', 'fa-star');
+		a.innerHTML = name;
+		a.href = '#';
+		li.addEventListener('click', () => {
+		channelName.innerHTML = name;
+		channelLocation.innerHTML = `by: ${location}`;
+		channelLocation.href = `http://what3words.com/${location}`;
+		
+		for (const li of channelList.getElementsByTagName('li')) {
+			li.classList.remove('selected');
 		}
-	});
-	
-	h2.appendChild(a);
-	li.appendChild(h2);
-	imageDiv.appendChild(favStarImage);
-	imageDiv.appendChild(image2);
-	li.appendChild(imageDiv);
-	channelList.appendChild(li);
-});
+			li.classList.add('selected');
+		});
+
+		favStarImage.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			if(favStarImage.classList.contains('fas')){
+				favStarImage.classList.remove('fas', 'fa-star');
+				favStarImage.classList.add('far', 'fa-star');
+				channel.favourite = false;
+			}else{
+				favStarImage.classList.remove('far', 'fa-star');
+				favStarImage.classList.add('fas', 'fa-star');
+				channel.favourite = true;
+			}
+		});
+
+		h2.appendChild(a);
+		li.appendChild(h2);
+		imageDiv.appendChild(favStarImage);
+		imageDiv.appendChild(image2);
+		li.appendChild(imageDiv);
+		channelList.appendChild(li);
+	}
+} 
 
 //Subit a message
 let message = document.getElementById('messageInput');
