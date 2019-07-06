@@ -18,6 +18,7 @@
 	width: 40%;
 	box-shadow: 10px 0 10px -10px black;
 	position: relative;
+	border: 1px solid black;
 }
 
 .section2 {
@@ -37,7 +38,6 @@ p,
 .list__item,
 .channel__images,
 .message__wrapper,
-.footer__wrapper,
 .emoji__section,
 .emojis,
 .list__wrapper,
@@ -283,14 +283,52 @@ h3 {
 	z-index: 1;
 }
 
-.footer {
+.channel__footer {
+	box-shadow: 10px 0 10px -10px black;
 	width: 100%;
 	height: 80px;
 }
 
-.footer__wrapper {
+.tabBtn {
 	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border: none;
+	outline: none;
 	align-items: center;
+	width: 33%;
+	height: 80px;
+	font-size: 16px;
+}
+
+.tab__buttons {
+	display: flex;
+}
+
+.tabBtn:hover {
+	color: #1976D2;
+	border-bottom: 5px solid #3f51b5;
+}
+
+.tabBtn__active {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border: none;
+	outline: none;
+	align-items: center;
+	width: 33%;
+	height: 80px;
+	color: #3f51b5;;
+	border-bottom: 5px solid #3f51b5;
+}
+
+.message__footer {
+	display: flex;
+	width: 100%;
+	height: 80px;
+	align-content: center;
+	background-color: snow;
 }
 
 .emoji__section {
@@ -321,7 +359,6 @@ h3 {
 	color: snow;
 	border-radius: 5px;
 	margin-left: 10px;
-	margin-bottom: 10px;
 }
 
 .fa-smile {
@@ -333,62 +370,9 @@ h3 {
 	color:#cddc39;
 }
 
-.tabBtn {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	border: none;
-	outline: none;
-	align-items: center;
-	width: 33%;
-	height: 80px;
-	font-size: 16px;
-}
-
-.tab__buttons {
-	box-shadow: 8px 0 10px -10px black;
-	display: flex;
-	width: 40%;
-}
-
-.tabBtn:hover {
-	color: #1976D2;
-	border-bottom: 5px solid #3f51b5;
-}
-
-.tabBtn__active {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	border: none;
-	outline: none;
-	align-items: center;
-	width: 33%;
-	height: 80px;
-	color: #3f51b5;;
-	border-bottom: 5px solid #3f51b5;
-}
-
-#channelName, #starImage i {
-	margin-left: 10px;
-	background-color: #3f51b5;
-	font-size: 30px;
-}
-
-#starImage {
-	position: absolute;
-	right: 20px;
-	background-color: #3f51b5;
-}
-
-#angleRight {
-	font-size: 30px;
-}
-
 .subitMessage__wrapper {
 	display: flex;
-	width: 53%;
-	height: 60px;
+	flex-grow: 3;
 	margin-top: 10px;
 	justify-content: space-between;
 	align-items: center;
@@ -412,6 +396,7 @@ h3 {
 }
 
 .messageBTN {
+	margin-right: 10px;
 	border: none;
 	outline: none;
 	width: 50px;
@@ -428,3 +413,18 @@ h3 {
 	color: #3f51b5;
 }
 
+#channelName, #starImage i {
+	margin-left: 10px;
+	background-color: #3f51b5;
+	font-size: 30px;
+}
+
+#starImage {
+	position: absolute;
+	right: 20px;
+	background-color: #3f51b5;
+}
+
+#angleRight {
+	font-size: 30px;
+}

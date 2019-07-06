@@ -25,109 +25,7 @@
 				</ul>
 				<button class="addBTN">+</button>
 			</div>
-		</div>
-
-		<div class="section2">
-			<header class="heading__wrapper">
-				<h1>
-					<div id="channelName"></div><a id='channelLocation'></a>
-				</h1>
-				<div id="starImage"></div>
-			</header>
-
-
-			<div id="messages" class="messages">
-				<div class="first__message">
-					<div class="message__title">
-						<h3><a href="http://what3words.com/buzz.coverage.rank" _blank>buzz.coverage.rank</a></h3>
-						<h3>Tues, June 25th, 15:00</h3>
-						<h3><em>8 mins left</em></h3>
-					</div>
-					<div class="own__message">
-						<div class="message__wrapper">
-							<p>When is a goat hairy on the outside and on the inside at the same time?</p>
-							<button class="BTN5">+5 min</button>
-						</div>
-						<div class="arrow-right"></div>
-					</div>
-				</div>
-				<div class="message">
-					<div class="message__title">
-						<h3><a href="http://what3words.com/talents.feels.firmer" _blank>talents.feels.firmer</a></h3>
-						<h3>Tues, June 25th, 15:10</h3>
-						<h3><em>16 mins left</em></h3>
-					</div>
-					<div class="other__message">
-						<div class="message__wrapper">
-							<p>Where did you learn how to make ice cream? At sundae school.</p>
-							<button class="BTN5">+5 min</button>
-						</div>
-						<div class="arrow-left"></div>
-					</div>
-				</div>
-				<div class="message">
-					<div class="message__title">
-						<h3><a href="http://what3words.com/mocking.pavement.hosts" _blank>mocking.pavement.hosts</a></h3>
-						<h3>Tues, June 25th,15:16</h3>
-						<h3><em>2 mins left</em></h3>
-					</div>
-					<div class="other__message">
-						<div class="message__wrapper">
-							<p>What do you call a cake that was made by a prostitute? Hoe-made.</p>
-							<button class="BTN5">+5 min</button>
-						</div>
-						<div class="arrow-left"></div>
-					</div>
-				</div>
-				<div class="message">
-					<div class="message__title">
-						<h3><a href="http://what3words.com/imported.envelope.dynamics" _blank>imported.envelope.dynamics</a></h3>
-						<h3>Tues, June 25th, 15:20</h3>
-						<h3><em>9 mins left</em></h3>
-					</div>
-					<div class="other__message">
-						<div class="message__wrapper">
-							<p>Dogs can't do MRI scans, but catscan.</p>
-							<button class="BTN5">+5 min</button>
-						</div>
-						<div class="arrow-left"></div>
-					</div>
-				</div>
-				<div class="message">
-					<div class="message__title">
-						<h3><a href="http://what3words.com/beard.wizards.honest " _blank>beard.wizards.honest </a> </h3>
-						<h3>Tues, June 25th, 15:35</h3>
-						<h3><em>10 mins left</em></h3>
-					</div>
-					<div class="other__message">
-						<div class="message__wrapper">
-							<p>Have you heard that there's a new restaurant on the moon?</p>
-							<button class="BTN5">+5 min</button>
-						</div>
-						<div class="arrow-left"></div>
-					</div>
-				</div>
-				<div class="message">
-					<div class="message__title">
-						<h3><a href="http://what3words.com/dormant.monitors.prosper " _blank>dormant.monitors.prosper </a></h3>
-						<h3>Tues, June 25th, 15:45</h3>
-						<h3><em>30 mins left</em></h3>
-					</div>
-					<div class="other__message">
-						<div class="message__wrapper">
-							<p>What do you call a horse that likes to moves around all the time?</p>
-							<button class="BTN5">+5 min</button>
-						</div>
-						<div class="arrow-left"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="footer">
-		<footer>
-			<div class="footer__wrapper">
+			<div class="channel__footer">
 				<div class="tab__buttons">
 					<button id="Tab1" onclick="selectedTab('tab1');" class="tabBtn">
 						<div class="tab__image"><i class="far fa-lightbulb"></i></div>
@@ -142,6 +40,18 @@
 						Favourites
 					</button>
 				</div>
+			</div>
+		</div>
+
+		<div class="section2">
+			<header class="heading__wrapper">
+				<h1>
+					<div id="channelName"></div><a id='channelLocation'></a>
+				</h1>
+				<div id="starImage"></div>
+			</header>
+			<div id="messages" class="messages"></div>
+			<div class="message__footer">
 				<div class="emoji__section">
 					<button onclick="toggleEmoji();" class="emojis__button"><i class="far fa-smile"></i></button>
 					<div id="emojis" class="emojis" style="display: none">
@@ -155,8 +65,9 @@
 					<button id="messageSubit" class="messageBTN"><i class="fas fa-arrow-right"></i></button>
 				</div>
 			</div>
-		</footer>
+		</div>
 	</div>
+
 	<script src="https://kit.fontawesome.com/41fdbeddc6.js"></script>
 	<script src="./script.js" defer></script>
 </body>
