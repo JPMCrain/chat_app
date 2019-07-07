@@ -1,13 +1,13 @@
 let userPosition;
 
 function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition((position) => {
 			userPosition = position;
 		});
-  } else {
-    x.innerHTML = "Geolocation is not supported by this browser.";
-  }
+	} else {
+		x.innerHTML = "Geolocation is not supported by this browser.";
+	}
 }
 
 window.onload = () => {
@@ -38,7 +38,7 @@ create.classList.add('createBTN');
 const channels = {};
 
 // new channel constructor object
-function NewChannel(channelId, channelName){
+function NewChannel(channelId, channelName) {
 	this.channelId = channelId
 	this.channelName = channelName;
 	this.location = "varied.groom.outliving"
@@ -55,7 +55,7 @@ function displayAddChannelInput() {
 	input.maxLength = 25;
 	abort.innerHTML = 'x ABORT';
 	create.innerHTML = 'CREATE';
-	
+
 	inputDiv.appendChild(input);
 	abortDiv.appendChild(abort);
 	createChannel.style.display = 'flex';
@@ -80,7 +80,7 @@ create.addEventListener('click', (e) => {
 	var channelId = Object.keys(channels).length + 1;
 	let newChannelName = `#${document.getElementById('newChannelInput').value}`;
 	let newChannel = new NewChannel(channelId, newChannelName);
-	channels[channelId] = newChannel 
+	channels[channelId] = newChannel
 	displayChannelList();
 	removeAddChannelInput();
 	addChannel.classList.remove('addBTN__active');
@@ -96,22 +96,23 @@ abort.addEventListener('click', () => {
 
 // display channel input section and abort removing channel input section
 addChannel.addEventListener('click', () => {
-	if(addChannel.classList.contains('addBTN')){
+	if (addChannel.classList.contains('addBTN')) {
 		addChannel.classList.remove('addBTN');
 		addChannel.classList.add('addBTN__active');
 		channelName.innerHTML = "";
 		channelLocation.innerHTML = "";
+		starImage.innerHTML = "";
 		displayAddChannelInput();
-	}else{
+	} else {
 		addChannel.classList.remove('addBTN__active');
 		addChannel.classList.add('addBTN');
 		removeAddChannelInput();
-	}	
+	}
 });
 
 // display channel list and refresh 
 function displayChannelList() {
-	channelList.innerHTML = null; 
+	channelList.innerHTML = null;
 
 	for (const channelId in channels) {
 		let channel = channels[channelId];
@@ -124,38 +125,49 @@ function displayChannelList() {
 		let imageDiv = document.createElement('div');
 		imageDiv.classList.add('channel__images')
 
-		let favStarImage = document.createElement('i'); 
-		favStarImage.classList.add(`far`, `fa-star`); 
-
-		let image2 = document.createElement('i'); 
-		image2.classList.add(`fas`, `fa-angle-right`); 
+		let favStarImage = document.createElement('i');
+		favStarImage.classList.add(`far`, `fa-star`);
+		favStarImage.id = channel.channelId;
+		console.log(favStarImage.id);
+		let image2 = document.createElement('i');
+		image2.classList.add(`fas`, `fa-angle-right`);
 
 		a.classList.add('a');
 
 		a.innerHTML = name;
 		a.href = '#';
+
 		li.addEventListener('click', () => {
-		channelName.innerHTML = name;
-		channelLocation.innerHTML = `by: ${location}`;
-		channelLocation.href = `http://what3words.com/${location}`;
-		
-		for (const li of channelList.getElementsByTagName('li')) {
-			li.classList.remove('selected');
-		}
+			channelName.innerHTML = name;
+			channelLocation.innerHTML = `by: ${location}`;
+			channelLocation.href = `http://what3words.com/${location}`;
+			starImage.innerHTML = null;
+			const favStar = imageDiv.firstChild.cloneNode(true);
+			starImage.appendChild(favStar);
+			for (const li of channelList.getElementsByTagName('li')) {
+				li.classList.remove('selected');
+			}
 			li.classList.add('selected');
 		});
 
 		favStarImage.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
-			if(favStarImage.classList.contains('fas')){
-				favStarImage.classList.remove('fas', 'fa-star');
-				favStarImage.classList.add('far', 'fa-star');
+			favStarImage.classList.remove('fas', 'fa-star', 'far');
+			let classes = ['fa-star'];
+			if (channel.favourite) {
+				classes.push('far');
 				channel.favourite = false;
-			}else{
-				favStarImage.classList.remove('far', 'fa-star');
-				favStarImage.classList.add('fas', 'fa-star');
+			} else {
+				classes.push('fas');
 				channel.favourite = true;
+			}
+			console.log(channel);
+			favStarImage.classList.add(...classes);
+			if(li.classList.contains('selected')) {
+				const currentChannelFavStar = starImage.firstChild;
+				currentChannelFavStar.classList.remove('fas', 'fa-star', 'far');
+				currentChannelFavStar.classList.add(...classes);
 			}
 		});
 
@@ -166,7 +178,7 @@ function displayChannelList() {
 		li.appendChild(imageDiv);
 		channelList.appendChild(li);
 	}
-} 
+}
 
 //Subit a message
 let message = document.getElementById('messageInput');
@@ -179,7 +191,7 @@ function Message(createdBy, own, text, position) {
 	this.text = text;
 	this.own = own;
 
-	if(position) {
+	if (position) {
 		this.longitude = position.coords.longitude;
 		this.latitude = position.coords.latitude;
 	}
@@ -193,11 +205,11 @@ function displayMessage(msg) {
 	let messageDiv = document.createElement('div');
 	let messageArrowDiv = document.createElement('div');
 	let messageArrow = document.createElement('div');
-	if(!msg.own){
+	if (!msg.own) {
 		messageDiv.classList.add('message');
 		messageArrowDiv.classList.add('other__message');
 		messageArrow.classList.add('arrow-left');
-	}else{
+	} else {
 		messageDiv.classList.add('first__message');
 		messageArrowDiv.classList.add('own__message');
 		messageArrow.classList.add('arrow-right');
@@ -213,18 +225,18 @@ function displayMessage(msg) {
 
 	what3words.innerHTML = msg.createdBy;
 	what3words.href = `http://what3words.com/${msg.createdBy}`;
-	let day = new Array( "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun" );
-	let month = new Array( "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+	let day = new Array("Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun");
+	let month = new Array("January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 	dateOfMsg.innerHTML = `${day[msg.createdOn.getDay() - 1]}, ${month[msg.createdOn.getMonth()]}, ${msg.createdOn.getHours()}:${msg.createdOn.getMinutes()} `;
 	em.innerHTML = `${msg.expiresOn} mins left`;
-	
+
 	let messageWrapper = document.createElement('div');
 	messageWrapper.classList.add('message__wrapper');
-	
+
 	let message = document.createElement('p');
 	let addTime = document.createElement('button');
 	addTime.classList.add('BTN5');
-	
+
 	message.innerHTML = msg.text;
 	addTime.innerHTML = "+5 MIN"
 
@@ -242,7 +254,7 @@ function displayMessage(msg) {
 	updateScroll();
 }
 
-function updateScroll(){
+function updateScroll() {
 	var element = document.getElementById("messages");
 	element.scrollTop = element.scrollHeight;
 }
@@ -251,7 +263,7 @@ submit.addEventListener('click', (e) => {
 	e.preventDefault();
 	e.stopPropagation();
 	let text = message.value
-	if (!text || text.length < 5){
+	if (!text || text.length < 5) {
 		alert('message to short!!')
 	} else {
 		const newMessage = new Message('buzz.coverage.rank', true, text);
@@ -265,11 +277,11 @@ let tab2 = document.getElementById('Tab2');
 let tab3 = document.getElementById('Tab3');
 //Show selected Tab in Channel Pannel
 function selectedTab(button) {
-	if(button == 'tab1') {
+	if (button == 'tab1') {
 		tab1.classList.add('tabBtn__active');
 		tab2.classList.remove('tabBtn__active');
 		tab3.classList.remove('tabBtn__active');
-	} else if(button == 'tab2') {
+	} else if (button == 'tab2') {
 		tab1.classList.remove('tabBtn__active');
 		tab2.classList.add('tabBtn__active');
 		tab3.classList.remove('tabBtn__active');
@@ -284,7 +296,7 @@ function selectedTab(button) {
 function toggleEmoji() {
 	let emojis = document.getElementById('emojis');
 
-	if(emojis.style.display == 'none'){
+	if (emojis.style.display == 'none') {
 		emojis.style.display = 'block';
 	} else {
 		emojis.style.display = 'none';
