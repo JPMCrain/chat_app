@@ -36,6 +36,7 @@ let create = document.createElement('button');
 create.classList.add('createBTN');
 
 const channels = {};
+let currentChannelId;
 
 // new channel constructor object
 function NewChannel(channelId, channelName) {
@@ -45,10 +46,17 @@ function NewChannel(channelId, channelName) {
 	this.favourite = false;
 	this.date = new Date();
 	this.messages = {};
+	this.messagesCount = 0;
 }
 
 // display the add channel input section
 function displayAddChannelInput() {
+	addChannel.classList.remove('addBTN');
+	addChannel.classList.add('addBTN__active');
+	channelName.innerHTML = "";
+	channelLocation.innerHTML = "";
+	starImage.innerHTML = "";
+
 	input.placeholder = '#Channel Name?';
 	input.id = "newChannelInput";
 	input.minLength = 1;
@@ -67,10 +75,26 @@ function displayAddChannelInput() {
 
 // remove channel input section
 function removeAddChannelInput() {
+	addChannel.classList.remove('addBTN__active');
+	addChannel.classList.add('addBTN');
 	input.value = "";
 	createChannel.style.display = 'none';
-	createChannel.removeChild(create);
-	document.getElementById('header2').removeChild(headerDiv);
+	if(createChannel.getElementsByClassName('createBTN').length > 0) {
+		createChannel.removeChild(create);	
+	}
+	const header2 = document.getElementById('header2');
+	if(header2.getElementsByClassName('addChannelInput__wrapper').length > 0) { 
+		header2.removeChild(headerDiv);
+	}
+	
+}
+
+function clearSelectedChannel() {
+	currentChannelId = null;
+	allMessages.innerHTML = null;
+	for (const li of channelList.getElementsByTagName('li')) {
+		li.classList.remove('selected');
+	}
 }
 
 // create new channel
@@ -97,15 +121,9 @@ abort.addEventListener('click', () => {
 // display channel input section and abort removing channel input section
 addChannel.addEventListener('click', () => {
 	if (addChannel.classList.contains('addBTN')) {
-		addChannel.classList.remove('addBTN');
-		addChannel.classList.add('addBTN__active');
-		channelName.innerHTML = "";
-		channelLocation.innerHTML = "";
-		starImage.innerHTML = "";
+		clearSelectedChannel();		
 		displayAddChannelInput();
 	} else {
-		addChannel.classList.remove('addBTN__active');
-		addChannel.classList.add('addBTN');
 		removeAddChannelInput();
 	}
 });
@@ -125,9 +143,9 @@ function displayChannelList() {
 		let imageDiv = document.createElement('div');
 		imageDiv.classList.add('channel__images');
 
-		// let messageCount = document.createElement('div');
-		// messageCount.classList.add('messageCount');
-		// messageCount.innerHTML = updateMessageCount();
+		let messageCount = document.createElement('div');
+		messageCount.classList.add('messageCount');
+		messageCount.innerHTML = channel.messagesCount;
 
 		let favStarImage = document.createElement('i');
 		favStarImage.classList.add(`far`, `fa-star`);
@@ -148,13 +166,15 @@ function displayChannelList() {
 			starImage.innerHTML = null;
 			const favStar = imageDiv.childNodes[0].cloneNode(true);
 			starImage.appendChild(favStar);
-
-			allMessages.innerHTML = null;
 			
-			for (const li of channelList.getElementsByTagName('li')) {
-				li.classList.remove('selected');
-			}
+			removeAddChannelInput();
+			clearSelectedChannel();
+
 			li.classList.add('selected');
+
+			displayAllMessage(channel.messages);
+
+			currentChannelId = channel.channelId;
 		});
 
 		favStarImage.addEventListener('click', (e) => {
@@ -180,7 +200,7 @@ function displayChannelList() {
 
 		h2.appendChild(a);
 		li.appendChild(h2);
-		// imageDiv.appendChild(messageCount);
+		imageDiv.appendChild(messageCount);
 		imageDiv.appendChild(favStarImage);
 		imageDiv.appendChild(image2);
 		li.appendChild(imageDiv);
@@ -192,7 +212,8 @@ function displayChannelList() {
 let message = document.getElementById('messageInput');
 let submit = document.getElementById('messageSubit');
 
-function Message(createdBy, own, text, position) {
+function Message(messageId, createdBy, own, text, position) {
+	this.messageId = messageId;
 	this.createdBy = createdBy;
 	this.createdOn = new Date();
 	this.expiresOn = 15;
@@ -277,24 +298,20 @@ submit.addEventListener('click', (e) => {
 	e.preventDefault();
 	e.stopPropagation();
 	let text = message.value
-	if (!text || text.length < 5) {
+	if (!text || text.length < 1) {
 		alert('message to short!!')
-	} else {
+	} else if(currentChannelId) {
+		let channel = channels[currentChannelId];
+		let location = channel.location;
+		let messages = channel.messages;
+		channel.messagesCount = Object.keys(messages).length + 1;
+		let messageId = channel.messagesCount;
+		const newMessage = new Message(messageId, location, true, text);
 		// sendMessageToServer(newMessage)
-		for (const channelId in channels) {
-			let channel = channels[channelId];
-			let name = channel.channelName;
-			let location = channel.location;
-			let messages = channel.messages;
-			let currentChannel = channelName.innerHTML;
-			const newMessage = new Message(location, true, text);
-			if (currentChannel == name) {
-				let messageId = Object.keys(messages).length + 1;
-				messages[messageId] = newMessage
-				displayAllMessage(messages);
-			} 
-		}
+		messages[messageId] = newMessage
+		displayAllMessage(messages);
 	}
+	message.value = "";
 });
 
 let tab1 = document.getElementById('Tab1');
