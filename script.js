@@ -44,7 +44,7 @@ function NewChannel(channelId, channelName) {
 	this.location = "varied.groom.outliving"
 	this.favourite = false;
 	this.date = new Date();
-	this.messages = [];
+	this.messages = {};
 }
 
 // display the add channel input section
@@ -123,7 +123,11 @@ function displayChannelList() {
 		let a = document.createElement('div');
 
 		let imageDiv = document.createElement('div');
-		imageDiv.classList.add('channel__images')
+		imageDiv.classList.add('channel__images');
+
+		// let messageCount = document.createElement('div');
+		// messageCount.classList.add('messageCount');
+		// messageCount.innerHTML = updateMessageCount();
 
 		let favStarImage = document.createElement('i');
 		favStarImage.classList.add(`far`, `fa-star`);
@@ -142,8 +146,11 @@ function displayChannelList() {
 			channelLocation.innerHTML = `by: ${location}`;
 			channelLocation.href = `http://what3words.com/${location}`;
 			starImage.innerHTML = null;
-			const favStar = imageDiv.firstChild.cloneNode(true);
+			const favStar = imageDiv.childNodes[0].cloneNode(true);
 			starImage.appendChild(favStar);
+
+			allMessages.innerHTML = null;
+			
 			for (const li of channelList.getElementsByTagName('li')) {
 				li.classList.remove('selected');
 			}
@@ -164,7 +171,7 @@ function displayChannelList() {
 			}
 			console.log(channel);
 			favStarImage.classList.add(...classes);
-			if(li.classList.contains('selected')) {
+			if (li.classList.contains('selected')) {
 				const currentChannelFavStar = starImage.firstChild;
 				currentChannelFavStar.classList.remove('fas', 'fa-star', 'far');
 				currentChannelFavStar.classList.add(...classes);
@@ -173,6 +180,7 @@ function displayChannelList() {
 
 		h2.appendChild(a);
 		li.appendChild(h2);
+		// imageDiv.appendChild(messageCount);
 		imageDiv.appendChild(favStarImage);
 		imageDiv.appendChild(image2);
 		li.appendChild(imageDiv);
@@ -200,57 +208,63 @@ function Message(createdBy, own, text, position) {
 // function sendMessageToServer(message) {
 // 	// TODO later on
 // }
+let allMessages = document.getElementById('messages');
 
-function displayMessage(msg) {
-	let messageDiv = document.createElement('div');
-	let messageArrowDiv = document.createElement('div');
-	let messageArrow = document.createElement('div');
-	if (!msg.own) {
-		messageDiv.classList.add('message');
-		messageArrowDiv.classList.add('other__message');
-		messageArrow.classList.add('arrow-left');
-	} else {
-		messageDiv.classList.add('first__message');
-		messageArrowDiv.classList.add('own__message');
-		messageArrow.classList.add('arrow-right');
-	}
+function displayAllMessage(messages) {
+	allMessages.innerHTML = null;
+	for (const messageId in messages) {
+		let msg = messages[messageId]
+		console.log(msg);
+		let messageDiv = document.createElement('div');
+		let messageArrowDiv = document.createElement('div');
+		let messageArrow = document.createElement('div');
+		if (!msg.own) {
+			messageDiv.classList.add('message');
+			messageArrowDiv.classList.add('other__message');
+			messageArrow.classList.add('arrow-left');
+		} else {
+			messageDiv.classList.add('first__message');
+			messageArrowDiv.classList.add('own__message');
+			messageArrow.classList.add('arrow-right');
+		}
 
-	let messageTitle = document.createElement('div');
-	messageTitle.classList.add('message__title');
-	let what3words = document.createElement('h3');
-	what3words.classList.add('h3Hover');
-	let dateOfMsg = document.createElement('h3');
-	let timeLeft = document.createElement('h3');
-	let em = document.createElement('em');
+		let messageTitle = document.createElement('div');
+		messageTitle.classList.add('message__title');
+		let what3words = document.createElement('h3');
+		what3words.classList.add('h3Hover');
+		let dateOfMsg = document.createElement('h3');
+		let timeLeft = document.createElement('h3');
+		let em = document.createElement('em');
 
-	what3words.innerHTML = msg.createdBy;
-	what3words.href = `http://what3words.com/${msg.createdBy}`;
-	let day = new Array("Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun");
-	let month = new Array("January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-	dateOfMsg.innerHTML = `${day[msg.createdOn.getDay() - 1]}, ${month[msg.createdOn.getMonth()]}, ${msg.createdOn.getHours()}:${msg.createdOn.getMinutes()} `;
-	em.innerHTML = `${msg.expiresOn} mins left`;
+		what3words.innerHTML = msg.createdBy;
+		what3words.href = `http://what3words.com/${msg.createdBy}`;
+		let day = new Array("Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat");
+		let month = new Array("January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+		dateOfMsg.innerHTML = `${day[msg.createdOn.getDay()]}, ${month[msg.createdOn.getMonth()]}, ${msg.createdOn.getHours()}:${msg.createdOn.getMinutes()} `;
+		em.innerHTML = `${msg.expiresOn} mins left`;
 
-	let messageWrapper = document.createElement('div');
-	messageWrapper.classList.add('message__wrapper');
+		let messageWrapper = document.createElement('div');
+		messageWrapper.classList.add('message__wrapper');
 
-	let message = document.createElement('p');
-	let addTime = document.createElement('button');
-	addTime.classList.add('BTN5');
+		let message = document.createElement('p');
+		let addTime = document.createElement('button');
+		addTime.classList.add('BTN5');
 
-	message.innerHTML = msg.text;
-	addTime.innerHTML = "+5 MIN"
+		message.innerHTML = msg.text;
+		addTime.innerHTML = "+5 MIN"
 
-	messageTitle.appendChild(what3words);
-	messageTitle.appendChild(dateOfMsg);
-	timeLeft.appendChild(em);
-	messageTitle.appendChild(timeLeft);
-	messageArrowDiv.appendChild(messageWrapper);
-	messageArrowDiv.appendChild(messageArrow);
-	messageWrapper.appendChild(message);
-	messageWrapper.appendChild(addTime);
-	messageDiv.appendChild(messageTitle);
-	messageDiv.appendChild(messageArrowDiv);
-	document.getElementById('messages').appendChild(messageDiv);
+		messageTitle.appendChild(what3words);
+		messageTitle.appendChild(dateOfMsg);
+		timeLeft.appendChild(em);
+		messageTitle.appendChild(timeLeft);
+		messageArrowDiv.appendChild(messageWrapper);
+		messageArrowDiv.appendChild(messageArrow);
+		messageWrapper.appendChild(message);
+		messageWrapper.appendChild(addTime);
+		messageDiv.appendChild(messageTitle);
+		messageDiv.appendChild(messageArrowDiv);
+		allMessages.appendChild(messageDiv);
+	};
 	updateScroll();
 }
 
@@ -266,9 +280,20 @@ submit.addEventListener('click', (e) => {
 	if (!text || text.length < 5) {
 		alert('message to short!!')
 	} else {
-		const newMessage = new Message('buzz.coverage.rank', true, text);
 		// sendMessageToServer(newMessage)
-		displayMessage(newMessage);
+		for (const channelId in channels) {
+			let channel = channels[channelId];
+			let name = channel.channelName;
+			let location = channel.location;
+			let messages = channel.messages;
+			let currentChannel = channelName.innerHTML;
+			const newMessage = new Message(location, true, text);
+			if (currentChannel == name) {
+				let messageId = Object.keys(messages).length + 1;
+				messages[messageId] = newMessage
+				displayAllMessage(messages);
+			} 
+		}
 	}
 });
 
