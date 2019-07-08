@@ -145,7 +145,8 @@ function displayChannelList() {
 
 		let messageCount = document.createElement('div');
 		messageCount.classList.add('messageCount');
-		messageCount.innerHTML = channel.messagesCount;
+		let count = document.createElement('p');
+		count.innerHTML = channel.messagesCount;
 
 		let favStarImage = document.createElement('i');
 		favStarImage.classList.add(`far`, `fa-star`);
@@ -200,6 +201,7 @@ function displayChannelList() {
 
 		h2.appendChild(a);
 		li.appendChild(h2);
+		messageCount.appendChild(count);
 		imageDiv.appendChild(messageCount);
 		imageDiv.appendChild(favStarImage);
 		imageDiv.appendChild(image2);
