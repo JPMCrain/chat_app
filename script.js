@@ -143,11 +143,6 @@ function displayChannelList() {
 		let imageDiv = document.createElement('div');
 		imageDiv.classList.add('channel__images');
 
-		let messageCount = document.createElement('div');
-		messageCount.classList.add('messageCount');
-		let count = document.createElement('p');
-		count.innerHTML = channel.messagesCount;
-
 		let favStarImage = document.createElement('i');
 		favStarImage.classList.add(`far`, `fa-star`);
 		favStarImage.id = channel.channelId;
@@ -165,7 +160,7 @@ function displayChannelList() {
 			channelLocation.innerHTML = `by: ${location}`;
 			channelLocation.href = `http://what3words.com/${location}`;
 			starImage.innerHTML = null;
-			const favStar = imageDiv.childNodes[0].cloneNode(true);
+			const favStar = imageDiv.childNodes[1].cloneNode(true);
 			starImage.appendChild(favStar);
 			
 			removeAddChannelInput();
@@ -198,6 +193,12 @@ function displayChannelList() {
 				currentChannelFavStar.classList.add(...classes);
 			}
 		});
+		
+		let messageCount = document.createElement('div');
+		messageCount.classList.add('messageCount');
+		let count = document.createElement('p');
+		count.id = "messageCount";
+		count.innerHTML = channel.messagesCount;
 
 		h2.appendChild(a);
 		li.appendChild(h2);
@@ -312,6 +313,7 @@ submit.addEventListener('click', (e) => {
 		// sendMessageToServer(newMessage)
 		messages[messageId] = newMessage
 		displayAllMessage(messages);
+		updateMessageCount(messageId);
 	}
 	message.value = "";
 });
@@ -345,4 +347,9 @@ function toggleEmoji() {
 	} else {
 		emojis.style.display = 'none';
 	}
+}
+
+function updateMessageCount(messageId){
+	document.getElementById('messageCount').innerHTML = null;
+	document.getElementById('messageCount').innerHTML = messageId;
 }
