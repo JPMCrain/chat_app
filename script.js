@@ -46,7 +46,7 @@ function NewChannel(channelId, channelName) {
 	this.favourite = false;
 	this.date = new Date();
 	this.messages = {};
-	this.messagesCount = 0;
+	this.messagesCount = null;
 	this.timerIntervalIds = {};
 }
 
@@ -215,7 +215,7 @@ function displayChannelList() {
 		let messageCount = document.createElement('div');
 		messageCount.classList.add('messageCount');
 		let count = document.createElement('p');
-		count.id = "messageCount";
+		count.id = `messageCount_${channel.channelId}`;
 		count.innerHTML = channel.messagesCount;
 
 		h2.appendChild(a);
@@ -292,6 +292,10 @@ function displayAllMessage(messages) {
 		let message = document.createElement('p');
 		let addTime = document.createElement('button');
 		addTime.classList.add('BTN5');
+		addTime.addEventListener('click', () => {
+			msg.expiresOn += 5;
+			em.innerHTML = `${msg.expiresOn} mins left`;
+		});
 
 		message.innerHTML = msg.text;
 		addTime.innerHTML = "+5 MIN"
@@ -332,12 +336,33 @@ function createNewMessage(e){
 		// sendMessageToServer(newMessage)
 		messages[messageId] = newMessage
 		displayAllMessage(messages);
-		updateMessageCount(messageId);
+		increaseMessageCount(currentChannelId);
 		const handleUpdateMessageFunc = handleUpdateMessage.bind(null, currentChannelId, messageId);
-		const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000);
+		const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000 );
 		channel.timerIntervalIds[messageId] = timerIntervalId
+		
 	}
 	message.value = "";
+}
+
+function increaseMessageCount(channelId){
+	let channel = channels[channelId];
+	let count = channel.messagesCount - 1;
+	++count;
+	channel.messagesCount = count;
+	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
+	messageCount.innerHTML = null;
+	messageCount.innerHTML = channel.messagesCount;
+}
+
+function decreaseMessageCount(channelId){
+	let channel = channels[channelId];
+	let count = channel.messagesCount;
+	--count;
+	channel.messagesCount = count;
+	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
+	messageCount.innerHTML = null;
+	messageCount.innerHTML = channel.messagesCount;
 }
 
 function handleUpdateMessage(channelId, messageId) {
@@ -349,18 +374,21 @@ function handleUpdateMessage(channelId, messageId) {
 		delete channel.timerIntervalIds[messageId]; 
 		delete channel.messages[messageId];		
 		const messageDiv = document.getElementById(`message_${messageId}`);
-		console.log(messageDiv);
 		if(messageDiv) {
 			allMessages.removeChild(messageDiv);
 		}
+		decreaseMessageCount(channelId);
 	} else {
-		console.log(count);
 		--count;
 		const timer = document.getElementById(`timer_${messageId}`);
 		timer.innerHTML = `${count} mins left`;
 		message.expiresOn = count;
+		console.log(message);
 	}
 }
+
+
+
 
 submit.addEventListener('click', createNewMessage);
 
@@ -401,7 +429,4 @@ function toggleEmoji() {
 	}
 }
 
-function updateMessageCount(messageId){
-	document.getElementById('messageCount').innerHTML = null;
-	document.getElementById('messageCount').innerHTML = messageId;
-}
+
