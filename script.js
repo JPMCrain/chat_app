@@ -47,6 +47,7 @@ function NewChannel(channelId, channelName) {
 	this.date = new Date();
 	this.messages = {};
 	this.messagesCount = 0;
+	this.timerIntervalIds = {};
 }
 
 // display the add channel input section
@@ -90,11 +91,28 @@ function removeAddChannelInput() {
 }
 
 function clearSelectedChannel() {
+	clearChannelMessageIntervals();
 	currentChannelId = null;
 	allMessages.innerHTML = null;
 	for (const li of channelList.getElementsByTagName('li')) {
 		li.classList.remove('selected');
 	}
+}
+
+function clearChannelMessageIntervals() {
+	if(!currentChannelId) {
+		return
+	}
+	const channel = channels[currentChannelId];
+	Object.values(channel.timerIntervalIds).forEach((timerIntervalId) => {
+		try {
+			clearInterval(timerIntervalId)
+			console.log(`Cleared interval ${timerIntervalId}!`);
+		} catch(err) {
+			console.log(`Failed to clear interval ${timerIntervalId}!`);
+			console.log(err);
+		}
+	});
 }
 
 // create new channel
@@ -237,9 +255,9 @@ let allMessages = document.getElementById('messages');
 function displayAllMessage(messages) {
 	allMessages.innerHTML = null;
 	for (const messageId in messages) {
-		let msg = messages[messageId]
-		console.log(msg);
+		let msg = messages[messageId];
 		let messageDiv = document.createElement('div');
+		messageDiv.id = `message_${msg.messageId}`;
 		let messageArrowDiv = document.createElement('div');
 		let messageArrow = document.createElement('div');
 		if (!msg.own) {
@@ -265,8 +283,9 @@ function displayAllMessage(messages) {
 		let day = new Array("Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat");
 		let month = new Array("January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 		dateOfMsg.innerHTML = `${day[msg.createdOn.getDay()]}, ${month[msg.createdOn.getMonth()]}, ${msg.createdOn.getHours()}:${msg.createdOn.getMinutes()} `;
-		em.innerHTML = `${msg.expiresOn} mins left`;
-
+		let expiresOn = msg.expiresOn;
+		em.innerHTML = `${expiresOn} mins left`;
+		em.id = `timer_${msg.messageId}`;
 		let messageWrapper = document.createElement('div');
 		messageWrapper.classList.add('message__wrapper');
 
@@ -297,7 +316,7 @@ function updateScroll() {
 	element.scrollTop = element.scrollHeight;
 }
 
-submit.addEventListener('click', (e) => {
+function createNewMessage(e){
 	e.preventDefault();
 	e.stopPropagation();
 	let text = message.value
@@ -314,9 +333,42 @@ submit.addEventListener('click', (e) => {
 		messages[messageId] = newMessage
 		displayAllMessage(messages);
 		updateMessageCount(messageId);
+		const handleUpdateMessageFunc = handleUpdateMessage.bind(null, currentChannelId, messageId);
+		const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000);
+		channel.timerIntervalIds[messageId] = timerIntervalId
 	}
 	message.value = "";
-});
+}
+
+function handleUpdateMessage(channelId, messageId) {
+	const channel = channels[channelId];
+	const message = channel.messages[messageId];
+	let count = message.expiresOn;
+	if(message.expiresOn <= 0) {
+		clearInterval(channel.timerIntervalIds[messageId])
+		delete channel.timerIntervalIds[messageId]; 
+		delete channel.messages[messageId];		
+		const messageDiv = document.getElementById(`message_${messageId}`);
+		console.log(messageDiv);
+		if(messageDiv) {
+			allMessages.removeChild(messageDiv);
+		}
+	} else {
+		console.log(count);
+		--count;
+		const timer = document.getElementById(`timer_${messageId}`);
+		timer.innerHTML = `${count} mins left`;
+		message.expiresOn = count;
+	}
+}
+
+submit.addEventListener('click', createNewMessage);
+
+message.addEventListener("keydown", (event) => {
+	if (event.keyCode === 13) {
+			createNewMessage(event);
+	}
+}, false);
 
 let tab1 = document.getElementById('Tab1');
 let tab2 = document.getElementById('Tab2');
