@@ -91,7 +91,7 @@ function removeAddChannelInput() {
 }
 
 function clearSelectedChannel() {
-	clearChannelMessageIntervals();
+	clearChannelMessageTimers();
 	currentChannelId = null;
 	allMessages.innerHTML = null;
 	for (const li of channelList.getElementsByTagName('li')) {
@@ -99,7 +99,7 @@ function clearSelectedChannel() {
 	}
 }
 
-function clearChannelMessageIntervals() {
+function clearChannelMessageTimers() {
 	if(!currentChannelId) {
 		return
 	}
@@ -237,7 +237,8 @@ function Message(messageId, createdBy, own, text, position) {
 	this.messageId = messageId;
 	this.createdBy = createdBy;
 	this.createdOn = new Date();
-	this.expiresOn = 15;
+	this.expiresOn = new Date(this.createdOn);
+	this.expiresOn.setMinutes(this.expiresOn.getMinutes() + 15);
 	this.text = text;
 	this.own = own;
 
@@ -255,64 +256,115 @@ let allMessages = document.getElementById('messages');
 function displayAllMessage(messages) {
 	allMessages.innerHTML = null;
 	for (const messageId in messages) {
-		let msg = messages[messageId];
-		let messageDiv = document.createElement('div');
-		messageDiv.id = `message_${msg.messageId}`;
-		let messageArrowDiv = document.createElement('div');
-		let messageArrow = document.createElement('div');
-		if (!msg.own) {
-			messageDiv.classList.add('message');
-			messageArrowDiv.classList.add('other__message');
-			messageArrow.classList.add('arrow-left');
-		} else {
-			messageDiv.classList.add('first__message');
-			messageArrowDiv.classList.add('own__message');
-			messageArrow.classList.add('arrow-right');
-		}
-
-		let messageTitle = document.createElement('div');
-		messageTitle.classList.add('message__title');
-		let what3words = document.createElement('h3');
-		what3words.classList.add('h3Hover');
-		let dateOfMsg = document.createElement('h3');
-		let timeLeft = document.createElement('h3');
-		let em = document.createElement('em');
-
-		what3words.innerHTML = msg.createdBy;
-		what3words.href = `http://what3words.com/${msg.createdBy}`;
-		let day = new Array("Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat");
-		let month = new Array("January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-		dateOfMsg.innerHTML = `${day[msg.createdOn.getDay()]}, ${month[msg.createdOn.getMonth()]}, ${msg.createdOn.getHours()}:${msg.createdOn.getMinutes()} `;
-		let expiresOn = msg.expiresOn;
-		em.innerHTML = `${expiresOn} mins left`;
-		em.id = `timer_${msg.messageId}`;
-		let messageWrapper = document.createElement('div');
-		messageWrapper.classList.add('message__wrapper');
-
-		let message = document.createElement('p');
-		let addTime = document.createElement('button');
-		addTime.classList.add('BTN5');
-		addTime.addEventListener('click', () => {
-			msg.expiresOn += 5;
-			em.innerHTML = `${msg.expiresOn} mins left`;
-		});
-
-		message.innerHTML = msg.text;
-		addTime.innerHTML = "+5 MIN"
-
-		messageTitle.appendChild(what3words);
-		messageTitle.appendChild(dateOfMsg);
-		timeLeft.appendChild(em);
-		messageTitle.appendChild(timeLeft);
-		messageArrowDiv.appendChild(messageWrapper);
-		messageArrowDiv.appendChild(messageArrow);
-		messageWrapper.appendChild(message);
-		messageWrapper.appendChild(addTime);
-		messageDiv.appendChild(messageTitle);
-		messageDiv.appendChild(messageArrowDiv);
-		allMessages.appendChild(messageDiv);
+		let message = messages[messageId];
+		allMessages.appendChild(setCreatedMessage(message));
+		startMessageExpirationTimer(currentChannelId, message.messageId);
 	};
 	updateScroll();
+}
+
+function getMessageAuthorElement(message) {
+	let what3words = document.createElement('h3');
+	what3words.classList.add('h3Hover');
+	what3words.innerHTML = message.createdBy;
+	what3words.href = `http://what3words.com/${message.createdBy}`;
+	return what3words;
+}
+
+function getMessageCreatedDateElement(message) {
+	let day = new Array("Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat");
+	let month = new Array("January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+	let dateOfMsg = document.createElement('h3');
+	dateOfMsg.innerHTML = `${day[message.createdOn.getDay()]}, ${month[message.createdOn.getMonth()]}, ${message.createdOn.getHours()}:${message.createdOn.getMinutes()} `;
+	return dateOfMsg;
+}
+
+function getMessageTimeLeftElement(message) {
+	let timeLeft = document.createElement('h3');
+	let em = document.createElement('em');
+
+	em.innerHTML = `${getExpiresOnMinutesLeft(message)} mins left`;
+	em.id = `timer_${message.messageId}`;
+	timeLeft.appendChild(em);
+	return timeLeft;
+}
+
+function getMessageTextElement(message) {
+	let messageText = document.createElement('p');
+	messageText.innerHTML = message.text;
+	return messageText;
+}
+
+function getMessageAddToTimer(message) {
+	let addTime = document.createElement('button');
+	addTime.classList.add('BTN5');
+	addTime.addEventListener('click', () => {
+		message.expiresOn.setMinutes(message.expiresOn.getMinutes() + 5);
+		document.getElementById(`timer_${message.messageId}`).innerHTML = `${getExpiresOnMinutesLeft(message)} mins left`;
+	});
+
+	addTime.innerHTML = "+5 MIN"
+	return addTime;
+}
+
+function getMessageTitle(message) {
+	let messageTitle = document.createElement('div');
+	messageTitle.classList.add('message__title');
+	messageTitle.appendChild(getMessageAuthorElement(message));
+	messageTitle.appendChild(getMessageCreatedDateElement(message));
+	messageTitle.appendChild(getMessageTimeLeftElement(message));
+	return messageTitle;
+}
+
+function setCreatedMessage(message) {
+	let messageArrowDiv = document.createElement('div');
+	let messageArrow = document.createElement('div');
+	let messageWrapper = document.createElement('div');
+	messageWrapper.classList.add('message__wrapper');
+	let messageDiv = document.createElement('div');
+	messageDiv.id = `message_${message.messageId}`;
+	if (!message.own) {
+		messageDiv.classList.add('message');
+		messageArrowDiv.classList.add('other__message');
+		messageArrow.classList.add('arrow-left');
+	} else {
+		messageDiv.classList.add('first__message');
+		messageArrowDiv.classList.add('own__message');
+		messageArrow.classList.add('arrow-right');
+	}
+
+	messageArrowDiv.appendChild(messageWrapper);
+	messageArrowDiv.appendChild(messageArrow);
+	messageWrapper.appendChild(getMessageTextElement(message));
+	messageWrapper.appendChild( getMessageAddToTimer(message));
+	messageDiv.appendChild(getMessageTitle(message));
+	messageDiv.appendChild(messageArrowDiv);
+	return messageDiv;
+}
+
+function startMessageExpirationTimer(channelId, messageId) {
+	const handleUpdateMessageFunc = handleUpdateMessage.bind(null, channelId, messageId);
+	const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000);
+	const channel = channels[channelId];
+	channel.timerIntervalIds[messageId] = timerIntervalId;
+}
+
+function handleUpdateMessage(channelId, messageId) {
+	const channel = channels[channelId];
+	const message = channel.messages[messageId];
+	if(isMessageExpired(message)) {
+		clearInterval(channel.timerIntervalIds[messageId])
+		delete channel.timerIntervalIds[messageId]; 
+		delete channel.messages[messageId];		
+		const messageDiv = document.getElementById(`message_${messageId}`);
+		if(messageDiv) {
+			allMessages.removeChild(messageDiv);
+		}
+		decreaseMessageCount(channelId);
+	} else {
+		const timer = document.getElementById(`timer_${messageId}`); 
+		timer.innerHTML = `${getExpiresOnMinutesLeft(message)} mins left`;
+	}
 }
 
 function updateScroll() {
@@ -335,15 +387,24 @@ function createNewMessage(e){
 		const newMessage = new Message(messageId, location, true, text);
 		// sendMessageToServer(newMessage)
 		messages[messageId] = newMessage
+		clearChannelMessageTimers()
 		displayAllMessage(messages);
 		increaseMessageCount(currentChannelId);
-		const handleUpdateMessageFunc = handleUpdateMessage.bind(null, currentChannelId, messageId);
-		const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000 );
-		channel.timerIntervalIds[messageId] = timerIntervalId
-		
 	}
 	message.value = "";
 }
+
+function getExpiresOnMinutesLeft(message) {
+	const now = new Date();
+	return Math.round((message.expiresOn - now) / (60 * 1000))
+}
+
+function isMessageExpired(message) {
+	const now = new Date();
+	const expiresOn = message.expiresOn;
+	return now.getTime() >= expiresOn.getTime(); 
+}
+
 
 function increaseMessageCount(channelId){
 	let channel = channels[channelId];
@@ -364,31 +425,6 @@ function decreaseMessageCount(channelId){
 	messageCount.innerHTML = null;
 	messageCount.innerHTML = channel.messagesCount;
 }
-
-function handleUpdateMessage(channelId, messageId) {
-	const channel = channels[channelId];
-	const message = channel.messages[messageId];
-	let count = message.expiresOn;
-	if(message.expiresOn <= 0) {
-		clearInterval(channel.timerIntervalIds[messageId])
-		delete channel.timerIntervalIds[messageId]; 
-		delete channel.messages[messageId];		
-		const messageDiv = document.getElementById(`message_${messageId}`);
-		if(messageDiv) {
-			allMessages.removeChild(messageDiv);
-		}
-		decreaseMessageCount(channelId);
-	} else {
-		--count;
-		const timer = document.getElementById(`timer_${messageId}`);
-		timer.innerHTML = `${count} mins left`;
-		message.expiresOn = count;
-		console.log(message);
-	}
-}
-
-
-
 
 submit.addEventListener('click', createNewMessage);
 
