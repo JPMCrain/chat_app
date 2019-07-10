@@ -11,7 +11,8 @@ function getLocation() {
 }
 
 window.onload = () => {
-	//getLocation();
+	//getLocation()
+	displayChannelList();
 	updateScroll();
 }
 
@@ -35,7 +36,28 @@ abort.classList.add('abortBTN');
 let create = document.createElement('button');
 create.classList.add('createBTN');
 
-const channels = {};
+function addDummyMessages(testChannel, amount) {
+	const messageCount = Object.keys(testChannel.messages).length
+	for(i = 0; i < amount; i++) {
+		testChannel.messagesCount = messageCount + 1;
+		let messageId = testChannel.messagesCount;
+		const testMessage = new Message(messageId, location, true, "Fake text " + messageId);
+		testChannel.messages[messageId] = testMessage;
+	}
+}
+
+function getDummyChannels() {
+	const channels = {};
+	let testChannel = new NewChannel(1, "Test channel");
+	addDummyMessages(testChannel, 3);
+	channels[testChannel.channelId] = testChannel;
+	testChannel = new NewChannel(2, "Test channel 2")
+	addDummyMessages(testChannel, 3);
+	channels[testChannel.channelId] = testChannel;
+	return channels;
+}
+
+const channels = getDummyChannels();
 let currentChannelId;
 
 // new channel constructor object
@@ -173,7 +195,9 @@ function displayChannelList() {
 		a.innerHTML = name;
 		a.href = '#';
 
-		li.addEventListener('click', () => {
+		li.addEventListener('click', onChannelItemClick);
+
+		function onChannelItemClick() {
 			channelName.innerHTML = name;
 			channelLocation.innerHTML = `by: ${location}`;
 			channelLocation.href = `http://what3words.com/${location}`;
@@ -186,10 +210,9 @@ function displayChannelList() {
 
 			li.classList.add('selected');
 
-			displayAllMessage(channel.messages);
-
+			displayAllMessages(channel.channelId);
 			currentChannelId = channel.channelId;
-		});
+		}
 
 		favStarImage.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -233,12 +256,13 @@ function displayChannelList() {
 let messageInput = document.getElementById('messageInput');
 let submit = document.getElementById('messageSubit');
 
+const messageExpireAfterMinutes = 5;
 function Message(messageId, createdBy, own, text, position) {
 	this.messageId = messageId;
 	this.createdBy = createdBy;
 	this.createdOn = new Date();
 	this.expiresOn = new Date(this.createdOn);
-	this.expiresOn.setMinutes(this.expiresOn.getMinutes() + 15);
+	this.expiresOn.setMinutes(this.expiresOn.getMinutes() + messageExpireAfterMinutes);
 	this.text = text;
 	this.own = own;
 
@@ -253,11 +277,15 @@ function Message(messageId, createdBy, own, text, position) {
 // }
 let allMessages = document.getElementById('messages');
 
-function displayAllMessage(messages) {
+function displayAllMessages(channelId) {
+	clearChannelMessageTimers();
+	const channel = channels[channelId];
 	allMessages.innerHTML = null;
+	const messages = channel.messages;
 	for (const messageId in messages) {
 		let message = messages[messageId];
-		allMessages.appendChild(setCreatedMessage(message));
+		allMessages.appendChild(createMessageElement(message));
+		startMessageExpirationTimer(channelId, messageId);
 	};
 	updateScroll();
 }
@@ -265,8 +293,8 @@ function displayAllMessage(messages) {
 function getMessageAuthorElement(message) {
 	let what3words = document.createElement('h3');
 	what3words.classList.add('h3Hover');
-	what3words.innerHTML = message.createdBy;
-	what3words.href = `http://what3words.com/${message.createdBy}`;
+	what3words.innerHTML = 'JP';
+	// what3words.href = `http://what3words.com/${message.createdBy}`;
 	return what3words;
 }
 
@@ -315,7 +343,7 @@ function getMessageTitle(message) {
 	return messageTitle;
 }
 
-function setCreatedMessage(message) {
+function createMessageElement(message) {
 	let messageArrowDiv = document.createElement('div');
 	let messageArrow = document.createElement('div');
 	let messageWrapper = document.createElement('div');
@@ -343,7 +371,7 @@ function setCreatedMessage(message) {
 
 function startMessageExpirationTimer(channelId, messageId) {
 	const handleUpdateMessageFunc = handleUpdateMessage.bind(null, channelId, messageId);
-	const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000 * 60);
+	const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000);
 	const channel = channels[channelId];
 	channel.timerIntervalIds[messageId] = timerIntervalId;
 }
@@ -364,6 +392,7 @@ function handleUpdateMessage(channelId, messageId) {
 		const timer = document.getElementById(`timer_${messageId}`); 
 		timer.innerHTML = `${getExpiresOnMinutesLeft(message)} mins left`;
 	}
+	console.log(messageId);
 }
 
 function getExpiresOnMinutesLeft(message) {
@@ -396,10 +425,8 @@ function createNewMessage(e){
 		let messageId = channel.messagesCount;
 		const newMessage = new Message(messageId, location, true, text);
 		// sendMessageToServer(newMessage)
-		messages[messageId] = newMessage
-		// clearChannelMessageTimers();
-		startMessageExpirationTimer(currentChannelId, messageId);
-		displayAllMessage(messages);
+		messages[messageId] = newMessage;
+		displayAllMessages(channel.channelId);
 		increaseMessageCount(currentChannelId);
 	}
 	messageInput.value = "";
