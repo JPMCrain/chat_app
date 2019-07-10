@@ -230,7 +230,7 @@ function displayChannelList() {
 }
 
 //Subit a message
-let message = document.getElementById('messageInput');
+let messageInput = document.getElementById('messageInput');
 let submit = document.getElementById('messageSubit');
 
 function Message(messageId, createdBy, own, text, position) {
@@ -258,7 +258,6 @@ function displayAllMessage(messages) {
 	for (const messageId in messages) {
 		let message = messages[messageId];
 		allMessages.appendChild(setCreatedMessage(message));
-		startMessageExpirationTimer(currentChannelId, message.messageId);
 	};
 	updateScroll();
 }
@@ -344,7 +343,7 @@ function setCreatedMessage(message) {
 
 function startMessageExpirationTimer(channelId, messageId) {
 	const handleUpdateMessageFunc = handleUpdateMessage.bind(null, channelId, messageId);
-	const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000);
+	const timerIntervalId = setInterval(handleUpdateMessageFunc, 1000 * 60);
 	const channel = channels[channelId];
 	channel.timerIntervalIds[messageId] = timerIntervalId;
 }
@@ -367,33 +366,6 @@ function handleUpdateMessage(channelId, messageId) {
 	}
 }
 
-function updateScroll() {
-	var element = document.getElementById("messages");
-	element.scrollTop = element.scrollHeight;
-}
-
-function createNewMessage(e){
-	e.preventDefault();
-	e.stopPropagation();
-	let text = message.value
-	if (!text || text.length < 1) {
-		alert('message to short!!')
-	} else if(currentChannelId) {
-		let channel = channels[currentChannelId];
-		let location = channel.location;
-		let messages = channel.messages;
-		channel.messagesCount = Object.keys(messages).length + 1;
-		let messageId = channel.messagesCount;
-		const newMessage = new Message(messageId, location, true, text);
-		// sendMessageToServer(newMessage)
-		messages[messageId] = newMessage
-		clearChannelMessageTimers()
-		displayAllMessage(messages);
-		increaseMessageCount(currentChannelId);
-	}
-	message.value = "";
-}
-
 function getExpiresOnMinutesLeft(message) {
 	const now = new Date();
 	return Math.round((message.expiresOn - now) / (60 * 1000))
@@ -405,6 +377,33 @@ function isMessageExpired(message) {
 	return now.getTime() >= expiresOn.getTime(); 
 }
 
+function updateScroll() {
+	var element = document.getElementById("messages");
+	element.scrollTop = element.scrollHeight;
+}
+
+function createNewMessage(e){
+	e.preventDefault();
+	e.stopPropagation();
+	let text = messageInput.value
+	if (!text || text.length < 1) {
+		alert('message to short!!')
+	} else if(currentChannelId) {
+		let channel = channels[currentChannelId];
+		let location = channel.location;
+		let messages = channel.messages;
+		channel.messagesCount = Object.keys(messages).length + 1;
+		let messageId = channel.messagesCount;
+		const newMessage = new Message(messageId, location, true, text);
+		// sendMessageToServer(newMessage)
+		messages[messageId] = newMessage
+		// clearChannelMessageTimers();
+		startMessageExpirationTimer(currentChannelId, messageId);
+		displayAllMessage(messages);
+		increaseMessageCount(currentChannelId);
+	}
+	messageInput.value = "";
+}
 
 function increaseMessageCount(channelId){
 	let channel = channels[channelId];
@@ -428,7 +427,7 @@ function decreaseMessageCount(channelId){
 
 submit.addEventListener('click', createNewMessage);
 
-message.addEventListener("keydown", (event) => {
+messageInput.addEventListener("keydown", (event) => {
 	if (event.keyCode === 13) {
 			createNewMessage(event);
 	}
