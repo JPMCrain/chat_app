@@ -12,7 +12,7 @@ function getLocation() {
 
 window.onload = () => {
 	//getLocation()
-	displayChannelList();
+	displayChannelList(channels);
 	updateScroll();
 }
 
@@ -38,10 +38,10 @@ create.classList.add('createBTN');
 
 function addDummyMessages(testChannel, amount) {
 	const messageCount = Object.keys(testChannel.messages).length
-	for(i = 0; i < amount; i++) {
-		testChannel.messagesCount = messageCount + 1;
+	for(let i = 0; i < amount; i++) {
+		testChannel.messagesCount = messageCount + i;
 		let messageId = testChannel.messagesCount;
-		const testMessage = new Message(messageId, location, true, "Fake text " + messageId);
+		const testMessage = new Message(messageId, location, true, "Fake text "  + messageId);
 		testChannel.messages[messageId] = testMessage;
 	}
 }
@@ -49,10 +49,15 @@ function addDummyMessages(testChannel, amount) {
 function getDummyChannels() {
 	const channels = {};
 	let testChannel = new NewChannel(1, "Test channel");
+	addDummyMessages(testChannel, 4);
+	channels[testChannel.channelId] = testChannel;
+	
+	testChannel = new NewChannel(2, "Test channel 2");
 	addDummyMessages(testChannel, 3);
 	channels[testChannel.channelId] = testChannel;
-	testChannel = new NewChannel(2, "Test channel 2")
-	addDummyMessages(testChannel, 3);
+
+	testChannel = new NewChannel(3, "Test channel 3");
+	addDummyMessages(testChannel, 8);
 	channels[testChannel.channelId] = testChannel;
 	return channels;
 }
@@ -128,8 +133,7 @@ function clearChannelMessageTimers() {
 	const channel = channels[currentChannelId];
 	Object.values(channel.timerIntervalIds).forEach((timerIntervalId) => {
 		try {
-			clearInterval(timerIntervalId)
-			console.log(`Cleared interval ${timerIntervalId}!`);
+			clearInterval(timerIntervalId);
 		} catch(err) {
 			console.log(`Failed to clear interval ${timerIntervalId}!`);
 			console.log(err);
@@ -145,7 +149,7 @@ create.addEventListener('click', (e) => {
 	let newChannelName = `#${document.getElementById('newChannelInput').value}`;
 	let newChannel = new NewChannel(channelId, newChannelName);
 	channels[channelId] = newChannel
-	displayChannelList();
+	displayChannelList(channels);
 	removeAddChannelInput();
 	addChannel.classList.remove('addBTN__active');
 	addChannel.classList.add('addBTN');
@@ -160,6 +164,9 @@ abort.addEventListener('click', () => {
 
 // display channel input section and abort removing channel input section
 addChannel.addEventListener('click', () => {
+	newChannelTab.classList.remove('tabBtn__active');
+	trendingTab.classList.remove('tabBtn__active');
+	favouritesTab.classList.remove('tabBtn__active');
 	if (addChannel.classList.contains('addBTN')) {
 		clearSelectedChannel();		
 		displayAddChannelInput();
@@ -169,9 +176,8 @@ addChannel.addEventListener('click', () => {
 });
 
 // display channel list and refresh 
-function displayChannelList() {
+function displayChannelList(channels) {
 	channelList.innerHTML = null;
-
 	for (const channelId in channels) {
 		let channel = channels[channelId];
 		let name = channel.channelName;
@@ -184,9 +190,13 @@ function displayChannelList() {
 		imageDiv.classList.add('channel__images');
 
 		let favStarImage = document.createElement('i');
-		favStarImage.classList.add(`far`, `fa-star`);
 		favStarImage.id = channel.channelId;
-		console.log(favStarImage.id);
+		if(!channel.favourite){
+			favStarImage.classList.add(`far`, `fa-star`);
+		} else {
+			favStarImage.classList.add(`fas`, `fa-star`);
+		}
+
 		let image2 = document.createElement('i');
 		image2.classList.add(`fas`, `fa-angle-right`);
 
@@ -214,7 +224,9 @@ function displayChannelList() {
 			currentChannelId = channel.channelId;
 		}
 
-		favStarImage.addEventListener('click', (e) => {
+		favStarImage.addEventListener('click', checkForFavStarImage);
+
+		function checkForFavStarImage(e) {
 			e.preventDefault();
 			e.stopPropagation();
 			favStarImage.classList.remove('fas', 'fa-star', 'far');
@@ -226,14 +238,13 @@ function displayChannelList() {
 				classes.push('fas');
 				channel.favourite = true;
 			}
-			console.log(channel);
 			favStarImage.classList.add(...classes);
 			if (li.classList.contains('selected')) {
 				const currentChannelFavStar = starImage.firstChild;
 				currentChannelFavStar.classList.remove('fas', 'fa-star', 'far');
 				currentChannelFavStar.classList.add(...classes);
 			}
-		});
+		}
 		
 		let messageCount = document.createElement('div');
 		messageCount.classList.add('messageCount');
@@ -252,17 +263,74 @@ function displayChannelList() {
 	}
 }
 
+let newChannelTab = document.getElementById('Tab1');
+let trendingTab = document.getElementById('Tab2');
+let favouritesTab = document.getElementById('Tab3');
+
+function displayTrendingChannelList() {
+	newChannelTab.classList.remove('tabBtn__active');
+	trendingTab.classList.add('tabBtn__active');
+	favouritesTab.classList.remove('tabBtn__active');
+	let trendingArray = Object.values(channels);
+	trendingArray.sort((count1, count2) => {
+		return  count2.messagesCount - count1.messagesCount;
+	});
+	let trendingChannels = {};
+  for (let i = 0; i < trendingArray.length; ++i){
+		trendingChannels[i] = trendingArray[i];
+	}
+	displayChannelList(trendingChannels);
+}
+
+function displayFavoChannelList() {
+		newChannelTab.classList.remove('tabBtn__active');
+		trendingTab.classList.remove('tabBtn__active');
+		favouritesTab.classList.add('tabBtn__active');
+		let favoArray = Object.values(channels);
+		function filterByFavourites(item) {
+			if (item.favourite === true) {
+				return true;
+			} 
+		}
+		let favoArraytrue = favoArray.filter(filterByFavourites);
+		let favoChannels = {}; 
+		for (let i = 0; i < favoArraytrue.length; ++i){
+			favoChannels[i] = favoArraytrue[i];
+		}
+		displayChannelList(favoChannels);
+}
+
+function displayNewChannelList() {
+	newChannelTab.classList.add('tabBtn__active');
+	trendingTab.classList.remove('tabBtn__active');
+	favouritesTab.classList.remove('tabBtn__active');
+	let newArray = Object.values(channels);
+	newArray.sort((date1, date2) => {
+		return  date2.date.getTime() - date1.date.getTime();
+	});
+	let newChannels = {};
+  for (let i = 0; i < newArray.length; ++i){
+		newChannels[i] = newArray[i];
+	}
+	displayChannelList(newChannels);
+}
+
+newChannelTab.addEventListener('click', displayNewChannelList);
+
+trendingTab.addEventListener('click', displayTrendingChannelList);
+
+favouritesTab.addEventListener('click', displayFavoChannelList);
+
 //Subit a message
 let messageInput = document.getElementById('messageInput');
 let submit = document.getElementById('messageSubit');
 
-const messageExpireAfterMinutes = 5;
 function Message(messageId, createdBy, own, text, position) {
 	this.messageId = messageId;
 	this.createdBy = createdBy;
 	this.createdOn = new Date();
 	this.expiresOn = new Date(this.createdOn);
-	this.expiresOn.setMinutes(this.expiresOn.getMinutes() + messageExpireAfterMinutes);
+	this.expiresOn.setMinutes(this.expiresOn.getMinutes() + 5);
 	this.text = text;
 	this.own = own;
 
@@ -284,7 +352,7 @@ function displayAllMessages(channelId) {
 	const messages = channel.messages;
 	for (const messageId in messages) {
 		let message = messages[messageId];
-		allMessages.appendChild(createMessageElement(message));
+		allMessages.appendChild(createMessageElement(message, channelId));
 		startMessageExpirationTimer(channelId, messageId);
 	};
 	updateScroll();
@@ -293,7 +361,7 @@ function displayAllMessages(channelId) {
 function getMessageAuthorElement(message) {
 	let what3words = document.createElement('h3');
 	what3words.classList.add('h3Hover');
-	what3words.innerHTML = 'JP';
+	what3words.innerHTML = "JAMES";
 	// what3words.href = `http://what3words.com/${message.createdBy}`;
 	return what3words;
 }
@@ -392,7 +460,6 @@ function handleUpdateMessage(channelId, messageId) {
 		const timer = document.getElementById(`timer_${messageId}`); 
 		timer.innerHTML = `${getExpiresOnMinutesLeft(message)} mins left`;
 	}
-	console.log(messageId);
 }
 
 function getExpiresOnMinutesLeft(message) {
@@ -445,7 +512,7 @@ function increaseMessageCount(channelId){
 function decreaseMessageCount(channelId){
 	let channel = channels[channelId];
 	let count = channel.messagesCount;
-	--count;
+	count--;
 	channel.messagesCount = count;
 	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
 	messageCount.innerHTML = null;
@@ -459,26 +526,6 @@ messageInput.addEventListener("keydown", (event) => {
 			createNewMessage(event);
 	}
 }, false);
-
-let tab1 = document.getElementById('Tab1');
-let tab2 = document.getElementById('Tab2');
-let tab3 = document.getElementById('Tab3');
-//Show selected Tab in Channel Pannel
-function selectedTab(button) {
-	if (button == 'tab1') {
-		tab1.classList.add('tabBtn__active');
-		tab2.classList.remove('tabBtn__active');
-		tab3.classList.remove('tabBtn__active');
-	} else if (button == 'tab2') {
-		tab1.classList.remove('tabBtn__active');
-		tab2.classList.add('tabBtn__active');
-		tab3.classList.remove('tabBtn__active');
-	} else if (button == 'tab3') {
-		tab1.classList.remove('tabBtn__active');
-		tab2.classList.remove('tabBtn__active');
-		tab3.classList.add('tabBtn__active');
-	}
-}
 
 // Toggle Emoji Button
 function toggleEmoji() {
