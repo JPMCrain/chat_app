@@ -13,6 +13,7 @@ function getLocation() {
 window.onload = () => {
 	//getLocation()
 	displayChannelList(channels);
+	createEmojiSection();
 	updateScroll();
 }
 
@@ -527,15 +528,35 @@ messageInput.addEventListener("keydown", (event) => {
 	}
 }, false);
 
-// Toggle Emoji Button
-function toggleEmoji() {
-	let emojis = document.getElementById('emojis');
+//create emoji list && and section
+let emojiSection = document.getElementById('emoji__section');
+let emojis = document.getElementById('emojis');
 
-	if (emojis.style.display == 'none') {
-		emojis.style.display = 'block';
-	} else {
-		emojis.style.display = 'none';
+let emojiList = [
+  [128513, 128591], [9986, 10160], [128640, 128704]
+];
+
+function createEmojiSection() {
+	for (let i = 0; i < emojiList.length; i++) {
+		let list = emojiList[i];
+		for (let x = list[0]; x < list[1]; x++) {
+			let emoji = document.createElement('div');
+			emoji.classList.add('emoji');
+			emoji.id = "emojis";
+			emoji.value = x;
+			emoji.innerHTML = `&#${x};`;
+			emojis.appendChild(emoji);
+		}
 	}
+	emojiSection.appendChild(emojis);
 }
 
+document.getElementById('emojis__button').addEventListener('click', toggleEmojiSection);
 
+function toggleEmojiSection() {
+	if (emojis.style.display == 'flex') {
+		emojis.style.display = 'none';
+	} else {
+		emojis.style.display = 'flex';
+	} 
+}

@@ -19,7 +19,7 @@
 				<img class="logo" src="https://ip.lfe.mw.tum.de/sections/moocus.png" alt="logo">
 				<h1>chatter|app</h1>
 			</header>
-			<div class="list__wrapper">
+			<div class="list__wrapper" id="list__wrapper">
 				<ul id='channelList'>
 				</ul>
 				<button id="addBTN" class="addBTN">+</button>
@@ -53,13 +53,9 @@
 			</div>
 			<div id="createChannel"></div>
 			<div class="message__footer">
-				<div class="emoji__section">
-					<button onclick="toggleEmoji();" class="emojis__button"><i class="far fa-smile"></i></button>
-					<div id="emojis" class="emojis" style="display: none">
-						&#x1F601; &#x1F602;
-						&#x1F603; &#x1F604;
-						&#x1F605;
-					</div>
+				<div class="emoji__section" id="emoji__section">
+					<button id="emojis__button" class="emojis__button"><i class="far fa-smile"></i></button>
+					<div class="emojis" id="emojis" style="display: none"></div>
 				</div>
 				<div class="subitMessage__wrapper">
 					<input id="messageInput" class="messageInput" type="text" placeholder="message?" maxlength="140">
