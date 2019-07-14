@@ -339,7 +339,7 @@ function createEmojiSection() {
 			emoji.id = "emojis";
 			emoji.value = x;
 			emoji.addEventListener('click', () => {
-				messageInput.value = emoji.innerHTML;
+				messageInput.value = emoji.innerHTML + messageInput.value;
 				toggleEmojiSection();
 			});
 			emoji.innerHTML = `&#${x};`;
