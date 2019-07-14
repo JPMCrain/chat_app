@@ -322,6 +322,43 @@ trendingTab.addEventListener('click', displayTrendingChannelList);
 
 favouritesTab.addEventListener('click', displayFavoChannelList);
 
+//create emoji list && and section
+let emojiSection = document.getElementById('emoji__section');
+let emojis = document.getElementById('emojis');
+
+let emojiList = [
+  [128513, 128591], [9986, 10160], [128640, 128704]
+];
+
+function createEmojiSection() {
+	for (let i = 0; i < emojiList.length; i++) {
+		let list = emojiList[i];
+		for (let x = list[0]; x < list[1]; x++) {
+			let emoji = document.createElement('div');
+			emoji.classList.add('emoji');
+			emoji.id = "emojis";
+			emoji.value = x;
+			emoji.addEventListener('click', () => {
+				messageInput.value = emoji.innerHTML;
+				toggleEmojiSection();
+			});
+			emoji.innerHTML = `&#${x};`;
+			emojis.appendChild(emoji);
+		}
+	}
+	emojiSection.appendChild(emojis);
+}
+
+document.getElementById('emojis__button').addEventListener('click', toggleEmojiSection);
+
+function toggleEmojiSection() {
+	if (emojis.style.display == 'flex') {
+		emojis.style.display = 'none';
+	} else {
+		emojis.style.display = 'flex';
+	} 
+}
+
 //Subit a message
 let messageInput = document.getElementById('messageInput');
 let submit = document.getElementById('messageSubit');
@@ -528,35 +565,3 @@ messageInput.addEventListener("keydown", (event) => {
 	}
 }, false);
 
-//create emoji list && and section
-let emojiSection = document.getElementById('emoji__section');
-let emojis = document.getElementById('emojis');
-
-let emojiList = [
-  [128513, 128591], [9986, 10160], [128640, 128704]
-];
-
-function createEmojiSection() {
-	for (let i = 0; i < emojiList.length; i++) {
-		let list = emojiList[i];
-		for (let x = list[0]; x < list[1]; x++) {
-			let emoji = document.createElement('div');
-			emoji.classList.add('emoji');
-			emoji.id = "emojis";
-			emoji.value = x;
-			emoji.innerHTML = `&#${x};`;
-			emojis.appendChild(emoji);
-		}
-	}
-	emojiSection.appendChild(emojis);
-}
-
-document.getElementById('emojis__button').addEventListener('click', toggleEmojiSection);
-
-function toggleEmojiSection() {
-	if (emojis.style.display == 'flex') {
-		emojis.style.display = 'none';
-	} else {
-		emojis.style.display = 'flex';
-	} 
-}

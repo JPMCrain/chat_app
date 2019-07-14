@@ -394,6 +394,7 @@ h3 {
 
 .emoji {
 	background-color: snow;
+	cursor: pointer;
 }
 
 .emojis {
