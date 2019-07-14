@@ -1,3 +1,4 @@
+"use strict";
 let userPosition;
 
 function getLocation() {
@@ -91,7 +92,7 @@ function NewChannel(channelId, channelName) {
 	this.favourite = false;
 	this.date = new Date();
 	this.messages = {};
-	this.messagesCount = null;
+	this.messagesCount = 0;
 	this.timerIntervalIds = {};
 }
 
