@@ -121,8 +121,8 @@ function removeAddChannelInput() {
 function clearSelectedChannel() {
 	clearChannelMessageTimers();
 	currentChannelId = null;
-	allMessages.innerHTML = null;
-	for (const li of channelList.getElementsByTagName('li')) {
+	allMessages.innerHTML = "";
+	for (let li of channelList.querySelectorAll('li')) {
 		li.classList.remove('selected');
 	}
 }
@@ -178,7 +178,7 @@ addChannel.addEventListener('click', () => {
 
 // display channel list and refresh 
 function displayChannelList(channels) {
-	channelList.innerHTML = null;
+	channelList.innerHTML = "";
 	for (const channelId in channels) {
 		let channel = channels[channelId];
 		let name = channel.channelName;
@@ -208,11 +208,13 @@ function displayChannelList(channels) {
 
 		li.addEventListener('click', onChannelItemClick);
 
-		function onChannelItemClick() {
+		function onChannelItemClick(e) {
+			e.preventDefault();
+			e.stopPropagation();
 			channelName.innerHTML = name;
 			channelLocation.innerHTML = `by: ${location}`;
 			channelLocation.href = `http://what3words.com/${location}`;
-			starImage.innerHTML = null;
+			starImage.innerHTML = "";
 			const favStar = imageDiv.childNodes[1].cloneNode(true);
 			starImage.appendChild(favStar);
 			
@@ -339,7 +341,15 @@ function createEmojiSection() {
 			emoji.id = "emojis";
 			emoji.value = x;
 			emoji.addEventListener('click', () => {
-				messageInput.value = emoji.innerHTML + messageInput.value;
+				let messageString = messageInput.value;
+        let startPosition = messageInput.selectionStart;
+				let emojiString = emoji.innerHTML
+				let cursorIndex = startPosition;
+				let startString = messageString.slice(0, cursorIndex);
+				let endString = messageString.slice(cursorIndex);
+
+				messageInput.value = startString + emojiString + endString
+
 				toggleEmojiSection();
 			});
 			emoji.innerHTML = `&#${x};`;
@@ -386,7 +396,7 @@ let allMessages = document.getElementById('messages');
 function displayAllMessages(channelId) {
 	clearChannelMessageTimers();
 	const channel = channels[channelId];
-	allMessages.innerHTML = null;
+	allMessages.innerHTML = "";
 	const messages = channel.messages;
 	for (const messageId in messages) {
 		let message = messages[messageId];
@@ -543,7 +553,7 @@ function increaseMessageCount(channelId){
 	++count;
 	channel.messagesCount = count;
 	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
-	messageCount.innerHTML = null;
+	messageCount.innerHTML = "";
 	messageCount.innerHTML = channel.messagesCount;
 }
 
@@ -553,7 +563,7 @@ function decreaseMessageCount(channelId){
 	count--;
 	channel.messagesCount = count;
 	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
-	messageCount.innerHTML = null;
+	messageCount.innerHTML = "";
 	messageCount.innerHTML = channel.messagesCount;
 }
 
@@ -565,3 +575,6 @@ messageInput.addEventListener("keydown", (event) => {
 	}
 }, false);
 
+function hideMessageElements() {
+
+}
