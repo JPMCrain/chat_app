@@ -57,7 +57,7 @@ create.classList.add('createBTN');
 
 function addDummyMessages(testChannel, amount) {
 	const messageCount = Object.keys(testChannel.messages).length
-	for(let i = 0; i < amount; i++) {
+	for(let i = 1; i < amount; i++) {
 		testChannel.messagesCount = messageCount + i;
 		let messageId = testChannel.messagesCount;
 		const testMessage = new Message(messageId, location, true, "Fake text "  + messageId);
@@ -186,6 +186,7 @@ addChannel.addEventListener('click', () => {
 	newChannelTab.classList.remove('tabBtn__active');
 	trendingTab.classList.remove('tabBtn__active');
 	favouritesTab.classList.remove('tabBtn__active');
+	hideMessageElements();
 	if (addChannel.classList.contains('addBTN')) {
 		clearSelectedChannel();		
 		displayAddChannelInput();
@@ -236,6 +237,8 @@ function displayChannelList(channels) {
 			const favStar = imageDiv.childNodes[1].cloneNode(true);
 			starImage.appendChild(favStar);
 			
+			unhideMessageElements();
+
 			removeAddChannelInput();
 			clearSelectedChannel();
 
@@ -377,8 +380,6 @@ function createEmojiSection() {
 	emojiSection.appendChild(emojis);
 }
 
-document.getElementById('emojis__button').addEventListener('click', toggleEmojiSection);
-
 function toggleEmojiSection() {
 	if (emojis.style.display == 'flex') {
 		emojis.style.display = 'none';
@@ -390,6 +391,9 @@ function toggleEmojiSection() {
 //Subit a message
 let messageInput = document.getElementById('messageInput');
 let submit = document.getElementById('messageSubit');
+let emojiButton = document.getElementById('emojis__button');
+
+emojiButton.addEventListener('click', toggleEmojiSection);
 
 function Message(messageId, createdBy, own, text, position) {
 	this.messageId = messageId;
@@ -406,6 +410,17 @@ function Message(messageId, createdBy, own, text, position) {
 	}
 }
 
+function hideMessageElements() {
+	messageInput.style.display = 'none';
+	submit.style.display = 'none';
+	emojiButton.style.display = 'none';
+}
+
+function unhideMessageElements() {
+	messageInput.style.display = 'block';
+	submit.style.display = 'block';
+	emojiButton.style.display = 'block';
+}
 // function sendMessageToServer(message) {
 // 	// TODO later on
 // }
@@ -567,7 +582,7 @@ function createNewMessage(e){
 
 function increaseMessageCount(channelId){
 	let channel = channels[channelId];
-	let count = channel.messagesCount - 1;
+	let count = channel.messagesCount + 1;
 	++count;
 	channel.messagesCount = count;
 	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
@@ -578,7 +593,9 @@ function increaseMessageCount(channelId){
 function decreaseMessageCount(channelId){
 	let channel = channels[channelId];
 	let count = channel.messagesCount;
-	count--;
+	while(count > 0){
+		--count
+	}
 	channel.messagesCount = count;
 	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
 	messageCount.innerHTML = "";
@@ -593,6 +610,3 @@ messageInput.addEventListener("keydown", (event) => {
 	}
 }, false);
 
-function hideMessageElements() {
-
-}

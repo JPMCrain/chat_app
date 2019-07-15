@@ -62,7 +62,7 @@ create.classList.add('createBTN');
 function addDummyMessages(testChannel, amount) {
   var messageCount = Object.keys(testChannel.messages).length;
 
-  for (var i = 0; i < amount; i++) {
+  for (var i = 1; i < amount; i++) {
     testChannel.messagesCount = messageCount + i;
     var messageId = testChannel.messagesCount;
     var testMessage = new Message(messageId, location, true, "Fake text " + messageId);
@@ -207,6 +207,7 @@ addChannel.addEventListener('click', function () {
   newChannelTab.classList.remove('tabBtn__active');
   trendingTab.classList.remove('tabBtn__active');
   favouritesTab.classList.remove('tabBtn__active');
+  hideMessageElements();
 
   if (addChannel.classList.contains('addBTN')) {
     clearSelectedChannel();
@@ -253,6 +254,7 @@ function displayChannelList(channels) {
       starImage.innerHTML = "";
       var favStar = imageDiv.childNodes[1].cloneNode(true);
       starImage.appendChild(favStar);
+      unhideMessageElements();
       removeAddChannelInput();
       clearSelectedChannel();
       li.classList.add('selected');
@@ -409,8 +411,6 @@ function createEmojiSection() {
   emojiSection.appendChild(emojis);
 }
 
-document.getElementById('emojis__button').addEventListener('click', toggleEmojiSection);
-
 function toggleEmojiSection() {
   if (emojis.style.display == 'flex') {
     emojis.style.display = 'none';
@@ -422,6 +422,8 @@ function toggleEmojiSection() {
 
 var messageInput = document.getElementById('messageInput');
 var submit = document.getElementById('messageSubit');
+var emojiButton = document.getElementById('emojis__button');
+emojiButton.addEventListener('click', toggleEmojiSection);
 
 function Message(messageId, createdBy, own, text, position) {
   this.messageId = messageId;
@@ -436,6 +438,18 @@ function Message(messageId, createdBy, own, text, position) {
     this.longitude = position.coords.longitude;
     this.latitude = position.coords.latitude;
   }
+}
+
+function hideMessageElements() {
+  messageInput.style.display = 'none';
+  submit.style.display = 'none';
+  emojiButton.style.display = 'none';
+}
+
+function unhideMessageElements() {
+  messageInput.style.display = 'block';
+  submit.style.display = 'block';
+  emojiButton.style.display = 'block';
 } // function sendMessageToServer(message) {
 // 	// TODO later on
 // }
@@ -606,7 +620,7 @@ function createNewMessage(e) {
 
 function increaseMessageCount(channelId) {
   var channel = channels[channelId];
-  var count = channel.messagesCount - 1;
+  var count = channel.messagesCount + 1;
   ++count;
   channel.messagesCount = count;
   var messageCount = document.getElementById("messageCount_".concat(channel.channelId));
@@ -617,7 +631,11 @@ function increaseMessageCount(channelId) {
 function decreaseMessageCount(channelId) {
   var channel = channels[channelId];
   var count = channel.messagesCount;
-  count--;
+
+  while (count > 0) {
+    --count;
+  }
+
   channel.messagesCount = count;
   var messageCount = document.getElementById("messageCount_".concat(channel.channelId));
   messageCount.innerHTML = "";
@@ -630,5 +648,3 @@ messageInput.addEventListener("keydown", function (event) {
     createNewMessage(event);
   }
 }, false);
-
-function hideMessageElements() {}

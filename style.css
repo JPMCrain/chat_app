@@ -413,6 +413,7 @@ h3 {
 }
 
 .emojis__button {
+	display: none;
 	border: none;
 	outline: none;
 	width: 50px;
@@ -443,6 +444,7 @@ h3 {
 }
 
 .messageInput {
+	display: none;
 	width: 600px;
 	height: 30px;
 	font-size: 20px;
@@ -458,6 +460,7 @@ h3 {
 }
 
 .messageBTN {
+	display: none;
 	margin-right: 10px;
 	border: none;
 	outline: none;
