@@ -1,6 +1,7 @@
 "use strict";
 
 var userPosition;
+var serverURL = 'http://localhost:3001';
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -58,33 +59,7 @@ var abort = document.createElement('button');
 abort.classList.add('abortBTN');
 var create = document.createElement('button');
 create.classList.add('createBTN');
-
-function addDummyMessages(testChannel, amount) {
-  var messageCount = Object.keys(testChannel.messages).length;
-
-  for (var i = 1; i < amount; i++) {
-    testChannel.messagesCount = messageCount + i;
-    var messageId = testChannel.messagesCount;
-    var testMessage = new Message(messageId, location, true, "Fake text " + messageId);
-    testChannel.messages[messageId] = testMessage;
-  }
-}
-
-function getDummyChannels() {
-  var channels = {};
-  var testChannel = new NewChannel(1, "Test channel");
-  addDummyMessages(testChannel, 4);
-  channels[testChannel.channelId] = testChannel;
-  testChannel = new NewChannel(2, "Test channel 2");
-  addDummyMessages(testChannel, 3);
-  channels[testChannel.channelId] = testChannel;
-  testChannel = new NewChannel(3, "Test channel 3");
-  addDummyMessages(testChannel, 8);
-  channels[testChannel.channelId] = testChannel;
-  return channels;
-}
-
-var channels = getDummyChannels();
+var channels = {};
 var currentChannelId; // new channel constructor object
 
 function NewChannel(channelId, channelName) {
@@ -94,7 +69,7 @@ function NewChannel(channelId, channelName) {
   this.favourite = false;
   this.date = new Date();
   this.messages = {};
-  this.messagesCount = 0;
+  this.messagesCount = null;
   this.timerIntervalIds = {};
 } // display the add channel input section
 
@@ -184,7 +159,6 @@ function clearChannelMessageTimers() {
 }
 
 function sendChannelToServer(channel) {
-  var server = 'http://localhost:3001/channel_list';
   var data = channel;
   var method = {
     method: 'POST',
@@ -195,7 +169,7 @@ function sendChannelToServer(channel) {
       'Content-Type': 'application/json'
     }
   };
-  fetch(server, method).then(function (res) {
+  fetch("".concat(serverURL, "/channel"), method).then(function (res) {
     return res.text();
   }).then(function (text) {
     console.log(text);
@@ -614,19 +588,23 @@ function updateScroll() {
   element.scrollTop = element.scrollHeight;
 }
 
-function sendMessageToServer(newMessage) {
-  var server = 'http://localhost:3001/channel_list';
-  var data = channel;
+function sendMessageToServer(message, channelId) {
+  var data = message;
   var method = {
     method: 'POST',
     // or 'PUT'
-    body: JSON.stringify(data),
-    // channel {object}!
+    body: JSON.stringify({
+      message: data,
+      channelId: channelId
+    }),
+    // message {object}!
     headers: {
       'Content-Type': 'application/json'
     }
   };
-  fetch(server, method).then(function (res) {
+  console.log(method.body.message);
+  console.log(method.body.currentChannelId);
+  fetch("".concat(serverURL, "/channel/message"), method).then(function (res) {
     return res.text();
   }).then(function (text) {
     console.log(text);
@@ -643,18 +621,15 @@ function createNewMessage(e) {
   if (!text || text.length < 1) {
     alert('message to short!!');
   } else if (currentChannelId) {
-    var _channel = channels[currentChannelId];
-    var _location = _channel.location;
-    var messages = _channel.messages;
-    _channel.messagesCount = Object.keys(messages).length + 1;
-    var messageId = _channel.messagesCount;
-    var newMessage = new Message(messageId, _location, true, text); // sendMessageToServer(newMessage);
-
+    var channel = channels[currentChannelId];
+    var location = channel.location;
+    var messages = channel.messages;
+    channel.messagesCount = Object.keys(messages).length + 1;
+    var messageId = channel.messagesCount;
+    var newMessage = new Message(messageId, location, true, text);
+    sendMessageToServer(newMessage, currentChannelId);
     messages[messageId] = newMessage;
-    console.log(newMessage);
-    console.log(_channel.channelId);
-    console.log(_channel.messages[messageId]);
-    displayAllMessages(_channel.channelId);
+    displayAllMessages(channel.channelId);
     increaseMessageCount(currentChannelId);
   }
 
@@ -663,10 +638,11 @@ function createNewMessage(e) {
 
 function increaseMessageCount(channelId) {
   var channel = channels[channelId];
-  var count = channel.messagesCount + 1;
-  ++count;
+  var count = channel.messagesCount - 1;
+  count++;
   channel.messagesCount = count;
   var messageCount = document.getElementById("messageCount_".concat(channel.channelId));
+  messageCount.innerHTML = '';
   messageCount.innerHTML = channel.messagesCount;
 }
 
