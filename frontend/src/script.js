@@ -160,6 +160,30 @@ function clearChannelMessageTimers() {
 	});
 }
 
+function sendChannelToServer(channel){
+	let server = 'http://localhost:3001/channel_list';
+	let data = channel;
+	const method = {
+		method: 'POST', // or 'PUT'
+		body: JSON.stringify(data), // channel {object}!
+		headers: {
+			'Content-Type': 'application/json'
+		} 
+	}
+
+	fetch(server, method)
+	.then(res => {
+		return res.text()
+	})
+	.then((text) => {
+		console.log(text);
+	})
+	.catch((err) => {
+		console.log(err);
+	});
+}
+
+
 // create new channel
 create.addEventListener('click', (e) => {
 	e.preventDefault();
@@ -168,6 +192,7 @@ create.addEventListener('click', (e) => {
 	let newChannelName = `#${document.getElementById('newChannelInput').value}`;
 	let newChannel = new NewChannel(channelId, newChannelName);
 	channels[channelId] = newChannel
+	sendChannelToServer(newChannel);
 	displayChannelList(channels);
 	removeAddChannelInput();
 	addChannel.classList.remove('addBTN__active');
@@ -421,9 +446,7 @@ function unhideMessageElements() {
 	submit.style.display = 'block';
 	emojiButton.style.display = 'block';
 }
-// function sendMessageToServer(message) {
-// 	// TODO later on
-// }
+
 let allMessages = document.getElementById('messages');
 
 function displayAllMessages(channelId) {
@@ -559,6 +582,29 @@ function updateScroll() {
 	element.scrollTop = element.scrollHeight;
 }
 
+function sendMessageToServer(newMessage){
+	let server = 'http://localhost:3001/channel_list';
+	let data = channel;
+	const method = {
+		method: 'POST', // or 'PUT'
+		body: JSON.stringify(data), // channel {object}!
+		headers: {
+			'Content-Type': 'application/json'
+		} 
+	}
+
+	fetch(server, method)
+	.then(res => {
+		return res.text()
+	})
+	.then((text) => {
+		console.log(text);
+	})
+	.catch((err) => {
+		console.log(err);
+	});
+}
+
 function createNewMessage(e){
 	e.preventDefault();
 	e.stopPropagation();
@@ -572,8 +618,9 @@ function createNewMessage(e){
 		channel.messagesCount = Object.keys(messages).length + 1;
 		let messageId = channel.messagesCount;
 		const newMessage = new Message(messageId, location, true, text);
-		// sendMessageToServer(newMessage)
+		// sendMessageToServer(newMessage);
 		messages[messageId] = newMessage;
+		console.log(newMessage);
 		displayAllMessages(channel.channelId);
 		increaseMessageCount(currentChannelId);
 	}
@@ -586,7 +633,6 @@ function increaseMessageCount(channelId){
 	++count;
 	channel.messagesCount = count;
 	const messageCount = document.getElementById(`messageCount_${channel.channelId}`);
-	messageCount.innerHTML = "";
 	messageCount.innerHTML = channel.messagesCount;
 }
 

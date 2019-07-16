@@ -181,6 +181,27 @@ function clearChannelMessageTimers() {
       console.log(err);
     }
   });
+}
+
+function sendChannelToServer(channel) {
+  var server = 'http://localhost:3001/channel_list';
+  var data = channel;
+  var method = {
+    method: 'POST',
+    // or 'PUT'
+    body: JSON.stringify(data),
+    // channel {object}!
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  fetch(server, method).then(function (res) {
+    return res.text();
+  }).then(function (text) {
+    console.log(text);
+  })["catch"](function (err) {
+    console.log(err);
+  });
 } // create new channel
 
 
@@ -191,6 +212,7 @@ create.addEventListener('click', function (e) {
   var newChannelName = "#".concat(document.getElementById('newChannelInput').value);
   var newChannel = new NewChannel(channelId, newChannelName);
   channels[channelId] = newChannel;
+  sendChannelToServer(newChannel);
   displayChannelList(channels);
   removeAddChannelInput();
   addChannel.classList.remove('addBTN__active');
@@ -450,10 +472,7 @@ function unhideMessageElements() {
   messageInput.style.display = 'block';
   submit.style.display = 'block';
   emojiButton.style.display = 'block';
-} // function sendMessageToServer(message) {
-// 	// TODO later on
-// }
-
+}
 
 var allMessages = document.getElementById('messages');
 
@@ -595,6 +614,27 @@ function updateScroll() {
   element.scrollTop = element.scrollHeight;
 }
 
+function sendMessageToServer(newMessage) {
+  var server = 'http://localhost:3001/channel_list';
+  var data = channel;
+  var method = {
+    method: 'POST',
+    // or 'PUT'
+    body: JSON.stringify(data),
+    // channel {object}!
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  fetch(server, method).then(function (res) {
+    return res.text();
+  }).then(function (text) {
+    console.log(text);
+  })["catch"](function (err) {
+    console.log(err);
+  });
+}
+
 function createNewMessage(e) {
   e.preventDefault();
   e.stopPropagation();
@@ -603,15 +643,18 @@ function createNewMessage(e) {
   if (!text || text.length < 1) {
     alert('message to short!!');
   } else if (currentChannelId) {
-    var channel = channels[currentChannelId];
-    var _location = channel.location;
-    var messages = channel.messages;
-    channel.messagesCount = Object.keys(messages).length + 1;
-    var messageId = channel.messagesCount;
-    var newMessage = new Message(messageId, _location, true, text); // sendMessageToServer(newMessage)
+    var _channel = channels[currentChannelId];
+    var _location = _channel.location;
+    var messages = _channel.messages;
+    _channel.messagesCount = Object.keys(messages).length + 1;
+    var messageId = _channel.messagesCount;
+    var newMessage = new Message(messageId, _location, true, text); // sendMessageToServer(newMessage);
 
     messages[messageId] = newMessage;
-    displayAllMessages(channel.channelId);
+    console.log(newMessage);
+    console.log(_channel.channelId);
+    console.log(_channel.messages[messageId]);
+    displayAllMessages(_channel.channelId);
     increaseMessageCount(currentChannelId);
   }
 
@@ -624,7 +667,6 @@ function increaseMessageCount(channelId) {
   ++count;
   channel.messagesCount = count;
   var messageCount = document.getElementById("messageCount_".concat(channel.channelId));
-  messageCount.innerHTML = "";
   messageCount.innerHTML = channel.messagesCount;
 }
 

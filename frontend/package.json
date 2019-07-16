@@ -2,7 +2,7 @@
   "name": "chatter_app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/script.js",
   "scripts": {
     "build": "babel src -d dist"
   },
@@ -21,5 +21,8 @@
     "@babel/core": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
     "babel-preset-env": "^1.7.0"
+  },
+  "dependencies": {
+    "axios": "^0.18.0"
   }
 }
