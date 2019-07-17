@@ -35,21 +35,9 @@ const getChannelMessagesListFilePath = (channelId) => {
 	return tryCreateFile(filePath);
 };
 
-const isChannelValid = (channel) => {
-	return channel && 
-	channel.channelId && 
-	channel.channelName &&
-	channel.location &&
-	channel.favourite &&
-	channel.date &&
-	channel.messages &&
-	channel.messagesCount &&
-	channel.timerIntervalIds; 
-};
-
 const getChannels = () => {
 	const channels = JSON.parse(fs.readFileSync(channelFilePath));
-	return channels.filter(isChannelValid);
+	return channels;
 };
 
 // Create channel

@@ -33,9 +33,26 @@ function showError(error) {
   }
 }
 
+var serverChannels;
+
+function getChannels() {
+  fetch("".concat(serverURL, "/channel/list"), {
+    mode: 'cors'
+  }).then(function (response) {
+    return response.text();
+  }).then(function (text) {
+    serverChannels = JSON.parse(text);
+    delete serverChannels.count;
+    displayChannelList(serverChannels);
+    return serverChannels;
+  })["catch"](function (error) {
+    console.log('Request failed', error);
+  });
+}
+
 window.onload = function () {
   //getLocation()
-  displayChannelList(channels);
+  getChannels();
   createEmojiSection();
   updateScroll();
 }; //Channel pannel set up
@@ -59,7 +76,6 @@ var abort = document.createElement('button');
 abort.classList.add('abortBTN');
 var create = document.createElement('button');
 create.classList.add('createBTN');
-var channels = {};
 var currentChannelId; // new channel constructor object
 
 function NewChannel(channelId, channelName) {
@@ -69,7 +85,7 @@ function NewChannel(channelId, channelName) {
   this.favourite = false;
   this.date = new Date();
   this.messages = {};
-  this.messagesCount = null;
+  this.messagesCount = 0;
   this.timerIntervalIds = {};
 } // display the add channel input section
 
@@ -147,7 +163,7 @@ function clearChannelMessageTimers() {
     return;
   }
 
-  var channel = channels[currentChannelId];
+  var channel = serverChannels[currentChannelId];
   Object.values(channel.timerIntervalIds).forEach(function (timerIntervalId) {
     try {
       clearInterval(timerIntervalId);
@@ -182,12 +198,12 @@ function sendChannelToServer(channel) {
 create.addEventListener('click', function (e) {
   e.preventDefault();
   e.stopPropagation();
-  var channelId = Object.keys(channels).length + 1;
+  var channelId = Object.keys(serverChannels).length + 1;
   var newChannelName = "#".concat(document.getElementById('newChannelInput').value);
   var newChannel = new NewChannel(channelId, newChannelName);
-  channels[channelId] = newChannel;
+  serverChannels[channelId] = newChannel;
   sendChannelToServer(newChannel);
-  displayChannelList(channels);
+  displayChannelList(serverChannels);
   removeAddChannelInput();
   addChannel.classList.remove('addBTN__active');
   addChannel.classList.add('addBTN');
@@ -213,11 +229,12 @@ addChannel.addEventListener('click', function () {
   }
 }); // display channel list and refresh 
 
-function displayChannelList(channels) {
+function displayChannelList(serverChannels) {
   channelList.innerHTML = "";
+  console.log(serverChannels);
 
   var _loop = function _loop(channelId) {
-    var channel = channels[channelId];
+    var channel = serverChannels[channelId];
     var name = channel.channelName;
     var location = channel.location;
     var li = document.createElement('li');
@@ -303,7 +320,7 @@ function displayChannelList(channels) {
     channelList.appendChild(li);
   };
 
-  for (var channelId in channels) {
+  for (var channelId in serverChannels) {
     _loop(channelId);
   }
 }
@@ -316,7 +333,7 @@ function displayTrendingChannelList() {
   newChannelTab.classList.remove('tabBtn__active');
   trendingTab.classList.add('tabBtn__active');
   favouritesTab.classList.remove('tabBtn__active');
-  var trendingArray = Object.values(channels);
+  var trendingArray = Object.values(serverChannels);
   trendingArray.sort(function (count1, count2) {
     return count2.messagesCount - count1.messagesCount;
   });
@@ -333,7 +350,7 @@ function displayFavoChannelList() {
   newChannelTab.classList.remove('tabBtn__active');
   trendingTab.classList.remove('tabBtn__active');
   favouritesTab.classList.add('tabBtn__active');
-  var favoArray = Object.values(channels);
+  var favoArray = Object.values(serverChannels);
 
   function filterByFavourites(item) {
     if (item.favourite === true) {
@@ -355,7 +372,7 @@ function displayNewChannelList() {
   newChannelTab.classList.add('tabBtn__active');
   trendingTab.classList.remove('tabBtn__active');
   favouritesTab.classList.remove('tabBtn__active');
-  var newArray = Object.values(channels);
+  var newArray = Object.values(serverChannels);
   newArray.sort(function (date1, date2) {
     return date2.date.getTime() - date1.date.getTime();
   });
@@ -452,7 +469,7 @@ var allMessages = document.getElementById('messages');
 
 function displayAllMessages(channelId) {
   clearChannelMessageTimers();
-  var channel = channels[channelId];
+  var channel = serverChannels[channelId];
   allMessages.innerHTML = "";
   var messages = channel.messages;
 
@@ -547,12 +564,12 @@ function createMessageElement(message) {
 function startMessageExpirationTimer(channelId, messageId) {
   var handleUpdateMessageFunc = handleUpdateMessage.bind(null, channelId, messageId);
   var timerIntervalId = setInterval(handleUpdateMessageFunc, 1000);
-  var channel = channels[channelId];
+  var channel = serverChannels[channelId];
   channel.timerIntervalIds[messageId] = timerIntervalId;
 }
 
 function handleUpdateMessage(channelId, messageId) {
-  var channel = channels[channelId];
+  var channel = serverChannels[channelId];
   var message = channel.messages[messageId];
 
   if (isMessageExpired(message)) {
@@ -621,7 +638,7 @@ function createNewMessage(e) {
   if (!text || text.length < 1) {
     alert('message to short!!');
   } else if (currentChannelId) {
-    var channel = channels[currentChannelId];
+    var channel = serverChannels[currentChannelId];
     var location = channel.location;
     var messages = channel.messages;
     channel.messagesCount = Object.keys(messages).length + 1;
@@ -637,7 +654,7 @@ function createNewMessage(e) {
 }
 
 function increaseMessageCount(channelId) {
-  var channel = channels[channelId];
+  var channel = serverChannels[channelId];
   var count = channel.messagesCount - 1;
   count++;
   channel.messagesCount = count;
@@ -647,7 +664,7 @@ function increaseMessageCount(channelId) {
 }
 
 function decreaseMessageCount(channelId) {
-  var channel = channels[channelId];
+  var channel = serverChannels[channelId];
   var count = channel.messagesCount;
 
   while (count > 0) {
