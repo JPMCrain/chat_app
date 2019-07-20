@@ -216,6 +216,10 @@ function getChannelMessages(channelId){
 		return res.text()
 	})
 	.then((text) => {
+		if(text == 'no messages'){
+			alert(text);
+			return;
+		}
 		let channel = serverChannels[channelId];
 		let channelMessages = JSON.parse(text);
 		delete channelMessages.count

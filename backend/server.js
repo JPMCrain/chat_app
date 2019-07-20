@@ -69,8 +69,16 @@ server.post('/channel', (req, res) => {
 // Read messages
 server.get('/channel/message/:channelId', (req, res) => {
 	const channelId = req.params.channelId;
-	const messages = getMessages(channelId);
-	res.send(messages);
+	try {
+		if (fs.existsSync(`./data/channel_messages_${channelId}.json`)) {
+			const messages = getMessages(channelId);
+			res.send(messages);
+		} else {
+			res.send('no messages')
+		}
+	} catch(err) {
+		console.error(err)
+	}
 });
 
 server.post('/channel/message', (req, res) => {
