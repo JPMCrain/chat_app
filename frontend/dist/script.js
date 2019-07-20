@@ -39,10 +39,9 @@ function getChannels() {
   fetch("".concat(serverURL, "/channel/list"), {
     mode: 'cors'
   }).then(function (response) {
-    return response.text();
-  }).then(function (text) {
-    serverChannels = JSON.parse(text);
-    delete serverChannels.count;
+    return response.json();
+  }).then(function (channels) {
+    serverChannels = channels;
     console.log(serverChannels);
     displayChannelList(serverChannels);
     return serverChannels;
@@ -234,17 +233,11 @@ function getChannelMessages(channelId) {
   fetch("".concat(serverURL, "/channel/message/").concat(channelId), {
     mode: 'cors'
   }).then(function (res) {
-    return res.text();
-  }).then(function (text) {
-    if (text == 'no messages') {
-      alert(text);
-      return;
-    }
-
+    return res.json();
+  }).then(function (channelMessages) {
     var channel = serverChannels[channelId];
-    var channelMessages = JSON.parse(text);
-    delete channelMessages.count;
     var channelMessagesArray = Object.values(channelMessages);
+    channel.messageCount = channelMessagesArray.length;
     channelMessagesArray.forEach(function (prop) {
       var createdOn = new Date(prop.createdOn);
       prop.createdOn = createdOn;
@@ -254,7 +247,8 @@ function getChannelMessages(channelId) {
     var channelMessagesRefreshed = {};
 
     for (var i = 0; i < channelMessagesArray.length; ++i) {
-      channelMessagesRefreshed[i] = channelMessagesArray[i];
+      var message = channelMessagesArray[i];
+      channelMessagesRefreshed[message.messageId] = message;
     }
 
     channel.messages = channelMessagesRefreshed;
@@ -507,11 +501,13 @@ function displayAllMessages(channelId) {
   var channel = serverChannels[channelId];
   var messages = channel.messages;
   allMessages.innerHTML = "";
+  console.log(messages);
 
   for (var messageId in messages) {
+    console.log(messageId);
     var message = messages[messageId];
     allMessages.appendChild(createMessageElement(message, channelId));
-    startMessageExpirationTimer(channelId, messageId);
+    startMessageExpirationTimer(channelId, message.messageId);
   }
 
   ;

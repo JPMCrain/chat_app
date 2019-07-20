@@ -41,12 +41,17 @@ const getChannels = () => {
 };
 
 const getMessages = (channelId) => {
-	const messages = JSON.parse(fs.readFileSync(`./data/channel_messages_${channelId}.json`));
+	const fileUri = `./data/channel_messages_${channelId}.json`;
+	if (!fs.existsSync(fileUri)) {
+		return {};
+	}
+	const messages = JSON.parse(fs.readFileSync(fileUri));
 	return messages;
 };
 // Read channels
 server.get('/channel/list', (req, res) => {
 	const channels = getChannels();
+	delete channels.count
 	res.send(channels);
 });
 
@@ -70,16 +75,25 @@ server.post('/channel', (req, res) => {
 server.get('/channel/message/:channelId', (req, res) => {
 	const channelId = req.params.channelId;
 	try {
-		if (fs.existsSync(`./data/channel_messages_${channelId}.json`)) {
-			const messages = getMessages(channelId);
-			res.send(messages);
-		} else {
-			res.send('no messages')
-		}
+		const messages = getMessages(channelId);
+		delete messages.count;
+		const validMessages = {} // Not expired
+		Object.keys(messages).forEach((key) => {
+			const message = messages[key];
+			if(!isMessageExpired(new Date(message.expiresOn))) {
+				validMessages[key] = message;
+			}
+		});
+		res.json(validMessages);
 	} catch(err) {
-		console.error(err)
+		res.status(500).json({error: "Failed to get messages."})
 	}
 });
+
+function isMessageExpired(expiresOn) {
+	const now = new Date();
+	return now.getTime() >= expiresOn.getTime();
+}
 
 server.post('/channel/message', (req, res) => {
 	const message = req.body.message;

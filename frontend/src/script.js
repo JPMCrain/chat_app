@@ -28,15 +28,15 @@ function showError(error) {
 			break;
 	}
 }
+
 let serverChannels;
 
 function getChannels() {
 	fetch(`${serverURL}/channel/list`, { mode: 'cors' })
 		.then(function (response) {
-			return response.text();
-		}).then(function (text) {
-			serverChannels = JSON.parse(text);
-			delete serverChannels.count
+			return response.json();
+		}).then(function (channels) {
+			serverChannels = channels;
 			console.log(serverChannels);
 			displayChannelList(serverChannels);
 			return serverChannels;
@@ -213,17 +213,12 @@ addChannel.addEventListener('click', () => {
 function getChannelMessages(channelId){
 	fetch(`${serverURL}/channel/message/${channelId}`, { mode: 'cors' })
 	.then((res) => {
-		return res.text()
+		return res.json()
 	})
-	.then((text) => {
-		if(text == 'no messages'){
-			alert(text);
-			return;
-		}
+	.then((channelMessages) => {
 		let channel = serverChannels[channelId];
-		let channelMessages = JSON.parse(text);
-		delete channelMessages.count
 		let channelMessagesArray = Object.values(channelMessages);
+		channel.messageCount = channelMessagesArray.length;
 		channelMessagesArray.forEach((prop) => {
 			let createdOn = new Date(prop.createdOn);
 			prop.createdOn = createdOn;
@@ -232,7 +227,8 @@ function getChannelMessages(channelId){
 		});
 		let channelMessagesRefreshed = {};
 		for (let i = 0; i < channelMessagesArray.length; ++i) {
-			channelMessagesRefreshed[i] = channelMessagesArray[i];
+			const message = channelMessagesArray[i];
+			channelMessagesRefreshed[message.messageId] = message;
 		}
 		channel.messages = channelMessagesRefreshed;
 		displayAllMessages(channel.channelId);
@@ -473,10 +469,12 @@ function displayAllMessages(channelId) {
 	const channel = serverChannels[channelId];
 	const messages = channel.messages;
 	allMessages.innerHTML = "";
+	console.log(messages)
 	for (const messageId in messages) {
+		console.log(messageId)
 		let message = messages[messageId];
 		allMessages.appendChild(createMessageElement(message, channelId));
-		startMessageExpirationTimer(channelId, messageId);
+		startMessageExpirationTimer(channelId, message.messageId);
 	};
 	updateScroll();
 }
