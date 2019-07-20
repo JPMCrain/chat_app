@@ -37,7 +37,6 @@ function getChannels() {
 			return response.json();
 		}).then(function (channels) {
 			serverChannels = channels;
-			console.log(serverChannels);
 			displayChannelList(serverChannels);
 			return serverChannels;
 		})
@@ -218,7 +217,8 @@ function getChannelMessages(channelId){
 	.then((channelMessages) => {
 		let channel = serverChannels[channelId];
 		let channelMessagesArray = Object.values(channelMessages);
-		channel.messageCount = channelMessagesArray.length;
+		let count = document.getElementById(`messageCount_${channel.channelId}`);
+		count.innerHTML = Object.values(channelMessages).length;
 		channelMessagesArray.forEach((prop) => {
 			let createdOn = new Date(prop.createdOn);
 			prop.createdOn = createdOn;
@@ -469,9 +469,7 @@ function displayAllMessages(channelId) {
 	const channel = serverChannels[channelId];
 	const messages = channel.messages;
 	allMessages.innerHTML = "";
-	console.log(messages)
 	for (const messageId in messages) {
-		console.log(messageId)
 		let message = messages[messageId];
 		allMessages.appendChild(createMessageElement(message, channelId));
 		startMessageExpirationTimer(channelId, message.messageId);
@@ -611,8 +609,7 @@ function sendMessageToServer(message, channelId) {
 			'Content-Type': 'application/json'
 		}
 	};
-	console.log(method.body.message);
-	console.log(method.body.currentChannelId);
+
 	fetch(`${serverURL}/channel/message`, method)
 		.then(function (res) {
 			return res.text()

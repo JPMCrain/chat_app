@@ -42,7 +42,6 @@ function getChannels() {
     return response.json();
   }).then(function (channels) {
     serverChannels = channels;
-    console.log(serverChannels);
     displayChannelList(serverChannels);
     return serverChannels;
   })["catch"](function (error) {
@@ -237,7 +236,8 @@ function getChannelMessages(channelId) {
   }).then(function (channelMessages) {
     var channel = serverChannels[channelId];
     var channelMessagesArray = Object.values(channelMessages);
-    channel.messageCount = channelMessagesArray.length;
+    var count = document.getElementById("messageCount_".concat(channel.channelId));
+    count.innerHTML = Object.values(channelMessages).length;
     channelMessagesArray.forEach(function (prop) {
       var createdOn = new Date(prop.createdOn);
       prop.createdOn = createdOn;
@@ -501,10 +501,8 @@ function displayAllMessages(channelId) {
   var channel = serverChannels[channelId];
   var messages = channel.messages;
   allMessages.innerHTML = "";
-  console.log(messages);
 
   for (var messageId in messages) {
-    console.log(messageId);
     var message = messages[messageId];
     allMessages.appendChild(createMessageElement(message, channelId));
     startMessageExpirationTimer(channelId, message.messageId);
@@ -650,8 +648,6 @@ function sendMessageToServer(message, channelId) {
       'Content-Type': 'application/json'
     }
   };
-  console.log(method.body.message);
-  console.log(method.body.currentChannelId);
   fetch("".concat(serverURL, "/channel/message"), method).then(function (res) {
     return res.text();
   }).then(function (text) {
