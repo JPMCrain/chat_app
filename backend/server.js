@@ -40,6 +40,16 @@ const getChannels = () => {
 	return channels;
 };
 
+const getMessages = (channelId) => {
+	const messages = JSON.parse(fs.readFileSync(`./data/channel_messages_${channelId}.json`));
+	return messages;
+};
+// Read channels
+server.get('/channel/list', (req, res) => {
+	const channels = getChannels();
+	res.send(channels);
+});
+
 // Create channel
 server.post('/channel', (req, res) => {
 	const channel = req.body;
@@ -56,11 +66,16 @@ server.post('/channel', (req, res) => {
 	}
 });
 
+// Read messages
+server.get('/channel/message/:channelId', (req, res) => {
+	const channelId = req.params.channelId;
+	const messages = getMessages(channelId);
+	res.send(messages);
+});
+
 server.post('/channel/message', (req, res) => {
 	const message = req.body.message;
 	const channelId = req.body.channelId;
-	console.log(`message = ${message}`);
-	console.log(`channel ID = ${channelId}`);
 	if(!message) { 
 		res.send('Invalid message');
 		return;
@@ -75,11 +90,7 @@ server.post('/channel/message', (req, res) => {
 	res.send('Message is successfully saved!');
 });
 
-// Read channels
-server.get('/channel/list', (req, res) => {
-	const channels = getChannels();
-	res.send(channels);
-});
+
 
 const onOpened = () => {
 	initDataDirPath();

@@ -43,6 +43,7 @@ function getChannels() {
   }).then(function (text) {
     serverChannels = JSON.parse(text);
     delete serverChannels.count;
+    console.log(serverChannels);
     displayChannelList(serverChannels);
     return serverChannels;
   })["catch"](function (error) {
@@ -227,11 +228,40 @@ addChannel.addEventListener('click', function () {
   } else {
     removeAddChannelInput();
   }
-}); // display channel list and refresh 
+});
+
+function getChannelMessages(channelId) {
+  fetch("".concat(serverURL, "/channel/message/").concat(channelId), {
+    mode: 'cors'
+  }).then(function (res) {
+    return res.text();
+  }).then(function (text) {
+    var channel = serverChannels[channelId];
+    var channelMessages = JSON.parse(text);
+    delete channelMessages.count;
+    var channelMessagesArray = Object.values(channelMessages);
+    channelMessagesArray.forEach(function (prop) {
+      var createdOn = new Date(prop.createdOn);
+      prop.createdOn = createdOn;
+      var expiresOn = new Date(prop.expiresOn);
+      prop.expiresOn = expiresOn;
+    });
+    var channelMessagesRefreshed = {};
+
+    for (var i = 0; i < channelMessagesArray.length; ++i) {
+      channelMessagesRefreshed[i] = channelMessagesArray[i];
+    }
+
+    channel.messages = channelMessagesRefreshed;
+    displayAllMessages(channel.channelId);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+} // display channel list and refresh 
+
 
 function displayChannelList(serverChannels) {
   channelList.innerHTML = "";
-  console.log(serverChannels);
 
   var _loop = function _loop(channelId) {
     var channel = serverChannels[channelId];
@@ -271,7 +301,7 @@ function displayChannelList(serverChannels) {
       removeAddChannelInput();
       clearSelectedChannel();
       li.classList.add('selected');
-      displayAllMessages(channel.channelId);
+      getChannelMessages(channel.channelId);
       currentChannelId = channel.channelId;
     }
 
@@ -470,8 +500,8 @@ var allMessages = document.getElementById('messages');
 function displayAllMessages(channelId) {
   clearChannelMessageTimers();
   var channel = serverChannels[channelId];
-  allMessages.innerHTML = "";
   var messages = channel.messages;
+  allMessages.innerHTML = "";
 
   for (var messageId in messages) {
     var message = messages[messageId];

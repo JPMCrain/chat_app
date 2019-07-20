@@ -37,6 +37,7 @@ function getChannels() {
 		}).then(function (text) {
 			serverChannels = JSON.parse(text);
 			delete serverChannels.count
+			console.log(serverChannels);
 			displayChannelList(serverChannels);
 			return serverChannels;
 		})
@@ -209,10 +210,35 @@ addChannel.addEventListener('click', () => {
 	}
 });
 
+function getChannelMessages(channelId){
+	fetch(`${serverURL}/channel/message/${channelId}`, { mode: 'cors' })
+	.then((res) => {
+		return res.text()
+	})
+	.then((text) => {
+		let channel = serverChannels[channelId];
+		let channelMessages = JSON.parse(text);
+		delete channelMessages.count
+		let channelMessagesArray = Object.values(channelMessages);
+		channelMessagesArray.forEach((prop) => {
+			let createdOn = new Date(prop.createdOn);
+			prop.createdOn = createdOn;
+			let expiresOn = new Date(prop.expiresOn);
+			prop.expiresOn = expiresOn;
+		});
+		let channelMessagesRefreshed = {};
+		for (let i = 0; i < channelMessagesArray.length; ++i) {
+			channelMessagesRefreshed[i] = channelMessagesArray[i];
+		}
+		channel.messages = channelMessagesRefreshed;
+		displayAllMessages(channel.channelId);
+	})
+	.catch(err => console.log(err));
+}
+
 // display channel list and refresh 
 function displayChannelList(serverChannels) {
 	channelList.innerHTML = "";
-	console.log(serverChannels);
 	for (const channelId in serverChannels) {
 		let channel = serverChannels[channelId];
 		let name = channel.channelName;
@@ -258,8 +284,7 @@ function displayChannelList(serverChannels) {
 			clearSelectedChannel();
 
 			li.classList.add('selected');
-
-			displayAllMessages(channel.channelId);
+			getChannelMessages(channel.channelId);
 			currentChannelId = channel.channelId;
 		}
 
@@ -442,8 +467,8 @@ let allMessages = document.getElementById('messages');
 function displayAllMessages(channelId) {
 	clearChannelMessageTimers();
 	const channel = serverChannels[channelId];
-	allMessages.innerHTML = "";
 	const messages = channel.messages;
+	allMessages.innerHTML = "";
 	for (const messageId in messages) {
 		let message = messages[messageId];
 		allMessages.appendChild(createMessageElement(message, channelId));
