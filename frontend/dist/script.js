@@ -41,7 +41,18 @@ function getChannels() {
   }).then(function (response) {
     return response.json();
   }).then(function (channels) {
-    serverChannels = channels;
+    var channelArray = Object.values(channels);
+    channelArray.forEach(function (prop) {
+      var date = new Date(prop.date);
+      prop.date = date;
+    });
+    serverChannels = {};
+
+    for (var i = 0; i < channelArray.length; ++i) {
+      var channel = channelArray[i];
+      serverChannels[channel.channelId] = channel;
+    }
+
     displayChannelList(serverChannels);
     return serverChannels;
   })["catch"](function (error) {
