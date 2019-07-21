@@ -33,7 +33,8 @@ function showError(error) {
   }
 }
 
-var serverChannels;
+var serverChannels = {};
+var currentDisplayChannelList = displayNewChannelList;
 
 function getChannels() {
   fetch("".concat(serverURL, "/channel/list"), {
@@ -41,6 +42,7 @@ function getChannels() {
   }).then(function (response) {
     return response.json();
   }).then(function (channels) {
+    console.log(channels);
     var channelArray = Object.values(channels);
     channelArray.forEach(function (prop) {
       var date = new Date(prop.date);
@@ -53,7 +55,7 @@ function getChannels() {
       serverChannels[channel.channelId] = channel;
     }
 
-    displayChannelList(serverChannels);
+    currentDisplayChannelList(serverChannels);
     return serverChannels;
   })["catch"](function (error) {
     console.log('Request failed', error);
@@ -68,7 +70,7 @@ window.onload = function () {
 }; //Channel pannel set up
 
 
-var addChannel = document.getElementById('addBTN');
+var addChannelBtn = document.getElementById('addBTN');
 var createChannel = document.getElementById('createChannel');
 var channelList = document.getElementById('channelList');
 var channelName = document.getElementById('channelName');
@@ -82,10 +84,10 @@ var abortDiv = document.createElement('div');
 abortDiv.classList.add('addChannel');
 var input = document.createElement('input');
 input.classList.add('addChannelInput');
-var abort = document.createElement('button');
-abort.classList.add('abortBTN');
-var create = document.createElement('button');
-create.classList.add('createBTN');
+var abortBtn = document.createElement('button');
+abortBtn.classList.add('abortBTN');
+var createBtn = document.createElement('button');
+createBtn.classList.add('createBTN');
 var currentChannelId; // new channel constructor object
 
 function NewChannel(channelId, channelName) {
@@ -101,8 +103,8 @@ function NewChannel(channelId, channelName) {
 
 
 function displayAddChannelInput() {
-  addChannel.classList.remove('addBTN');
-  addChannel.classList.add('addBTN__active');
+  addChannelBtn.classList.remove('addBTN');
+  addChannelBtn.classList.add('addBTN__active');
   channelName.innerHTML = "";
   channelLocation.innerHTML = "";
   starImage.innerHTML = "";
@@ -110,12 +112,12 @@ function displayAddChannelInput() {
   input.id = "newChannelInput";
   input.minLength = 1;
   input.maxLength = 25;
-  abort.innerHTML = 'x ABORT';
-  create.innerHTML = 'CREATE';
+  abortBtn.innerHTML = 'x ABORT';
+  createBtn.innerHTML = 'CREATE';
   inputDiv.appendChild(input);
-  abortDiv.appendChild(abort);
+  abortDiv.appendChild(abortBtn);
   createChannel.style.display = 'flex';
-  createChannel.appendChild(create);
+  createChannel.appendChild(createBtn);
   headerDiv.appendChild(inputDiv);
   headerDiv.appendChild(abortDiv);
   document.getElementById('header2').appendChild(headerDiv);
@@ -123,13 +125,13 @@ function displayAddChannelInput() {
 
 
 function removeAddChannelInput() {
-  addChannel.classList.remove('addBTN__active');
-  addChannel.classList.add('addBTN');
+  addChannelBtn.classList.remove('addBTN__active');
+  addChannelBtn.classList.add('addBTN');
   input.value = "";
   createChannel.style.display = 'none';
 
   if (createChannel.getElementsByClassName('createBTN').length > 0) {
-    createChannel.removeChild(create);
+    createChannel.removeChild(createBtn);
   }
 
   var header2 = document.getElementById('header2');
@@ -205,33 +207,30 @@ function sendChannelToServer(channel) {
 } // create new channel
 
 
-create.addEventListener('click', function (e) {
+createBtn.addEventListener('click', function (e) {
   e.preventDefault();
   e.stopPropagation();
-  var channelId = Object.keys(serverChannels).length + 1;
+  var newChannelId = Object.keys(serverChannels).length + 1;
   var newChannelName = "#".concat(document.getElementById('newChannelInput').value);
-  var newChannel = new NewChannel(channelId, newChannelName);
-  serverChannels[channelId] = newChannel;
+  var newChannel = new NewChannel(newChannelId, newChannelName);
+  serverChannels[newChannelId] = newChannel;
   sendChannelToServer(newChannel);
-  displayChannelList(serverChannels);
+  currentDisplayChannelList();
   removeAddChannelInput();
-  addChannel.classList.remove('addBTN__active');
-  addChannel.classList.add('addBTN');
+  addChannelBtn.classList.remove('addBTN__active');
+  addChannelBtn.classList.add('addBTN');
 }); // abort removing channel input section
 
-abort.addEventListener('click', function () {
+abortBtn.addEventListener('click', function () {
   removeAddChannelInput();
-  addChannel.classList.remove('addBTN__active');
-  addChannel.classList.add('addBTN');
+  addChannelBtn.classList.remove('addBTN__active');
+  addChannelBtn.classList.add('addBTN');
 }); // display channel input section and abort removing channel input section
 
-addChannel.addEventListener('click', function () {
-  newChannelTab.classList.remove('tabBtn__active');
-  trendingTab.classList.remove('tabBtn__active');
-  favouritesTab.classList.remove('tabBtn__active');
+addChannelBtn.addEventListener('click', function () {
   hideMessageElements();
 
-  if (addChannel.classList.contains('addBTN')) {
+  if (addChannelBtn.classList.contains('addBTN')) {
     clearSelectedChannel();
     displayAddChannelInput();
   } else {
@@ -343,6 +342,8 @@ function displayChannelList(serverChannels) {
 
         (_currentChannelFavSta = currentChannelFavStar.classList).add.apply(_currentChannelFavSta, classes);
       }
+
+      updateChannelFavourite(channel);
     }
 
     var messageCount = document.createElement('div');
@@ -363,6 +364,26 @@ function displayChannelList(serverChannels) {
   for (var channelId in serverChannels) {
     _loop(channelId);
   }
+}
+
+function updateChannelFavourite(channel) {
+  var data = channel;
+  var method = {
+    method: 'PUT',
+    // or 'POST'
+    body: JSON.stringify(data),
+    // channel {object}!
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  fetch("".concat(serverURL, "/channel/favourite"), method).then(function (res) {
+    return res.text();
+  }).then(function (text) {
+    console.log(text);
+  })["catch"](function (err) {
+    console.log(err);
+  });
 }
 
 var newChannelTab = document.getElementById('Tab1');
@@ -425,9 +446,14 @@ function displayNewChannelList() {
   displayChannelList(newChannels);
 }
 
-newChannelTab.addEventListener('click', displayNewChannelList);
-trendingTab.addEventListener('click', displayTrendingChannelList);
-favouritesTab.addEventListener('click', displayFavoChannelList); //create emoji list && and section
+function handleChannelItemClick(displayChannelsFunction) {
+  currentDisplayChannelList = displayChannelsFunction;
+  currentDisplayChannelList();
+}
+
+newChannelTab.addEventListener('click', handleChannelItemClick.bind(null, displayNewChannelList));
+trendingTab.addEventListener('click', handleChannelItemClick.bind(null, displayTrendingChannelList));
+favouritesTab.addEventListener('click', handleChannelItemClick.bind(null, displayFavoChannelList)); //create emoji list && and section
 
 var emojiSection = document.getElementById('emoji__section');
 var emojis = document.getElementById('emojis');

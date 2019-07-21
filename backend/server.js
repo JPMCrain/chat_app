@@ -71,6 +71,27 @@ server.post('/channel', (req, res) => {
 	}
 });
 
+//Update Channel favourite
+server.put('/channel/favourite', (req, res) => {
+	const channel = req.body;
+	const serverChannels = getChannels();
+	let serverArrayChannels = Object.values(serverChannels);
+	let channels = {};
+	serverArrayChannels.map((savedChannel) => {
+		if(savedChannel.channelId == channel.channelId){
+			savedChannel.favourite = channel.favourite;
+			return channel;
+		}
+		return savedChannel;
+	});
+	for (let i = 0; i < serverArrayChannels.length; ++i) {
+		const channel = serverArrayChannels[i];
+		channels[channel.channelId] = channel;
+	}
+	fs.writeFileSync(channelFilePath, JSON.stringify(channels));
+	res.send('Updated!');
+});
+
 // Read messages
 server.get('/channel/message/:channelId', (req, res) => {
 	const channelId = req.params.channelId;

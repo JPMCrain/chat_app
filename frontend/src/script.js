@@ -29,13 +29,15 @@ function showError(error) {
 	}
 }
 
-let serverChannels;
+let serverChannels = {};
+let currentDisplayChannelList = displayNewChannelList;
 
 function getChannels() {
 	fetch(`${serverURL}/channel/list`, { mode: 'cors' })
 		.then(function (response) {
 			return response.json();
 		}).then(function (channels) {
+			console.log(channels)
 			let channelArray = Object.values(channels);
 			channelArray.forEach((prop) => {
 				let date = new Date(prop.date);
@@ -47,8 +49,8 @@ function getChannels() {
 			const channel = channelArray[i];
 			serverChannels[channel.channelId] = channel;
 			}
-			
-			displayChannelList(serverChannels);
+
+			currentDisplayChannelList(serverChannels);
 			return serverChannels;
 		})
 		.catch(function (error) {
@@ -64,7 +66,7 @@ window.onload = () => {
 }
 
 //Channel pannel set up
-let addChannel = document.getElementById('addBTN');
+let addChannelBtn = document.getElementById('addBTN');
 let createChannel = document.getElementById('createChannel');
 let channelList = document.getElementById('channelList');
 let channelName = document.getElementById('channelName');
@@ -78,10 +80,10 @@ let abortDiv = document.createElement('div');
 abortDiv.classList.add('addChannel');
 let input = document.createElement('input');
 input.classList.add('addChannelInput');
-let abort = document.createElement('button');
-abort.classList.add('abortBTN');
-let create = document.createElement('button');
-create.classList.add('createBTN');
+let abortBtn = document.createElement('button');
+abortBtn.classList.add('abortBTN');
+let createBtn = document.createElement('button');
+createBtn.classList.add('createBTN');
 
 
 let currentChannelId;
@@ -100,8 +102,8 @@ function NewChannel(channelId, channelName) {
 
 // display the add channel input section
 function displayAddChannelInput() {
-	addChannel.classList.remove('addBTN');
-	addChannel.classList.add('addBTN__active');
+	addChannelBtn.classList.remove('addBTN');
+	addChannelBtn.classList.add('addBTN__active');
 	channelName.innerHTML = "";
 	channelLocation.innerHTML = "";
 	starImage.innerHTML = "";
@@ -110,13 +112,13 @@ function displayAddChannelInput() {
 	input.id = "newChannelInput";
 	input.minLength = 1;
 	input.maxLength = 25;
-	abort.innerHTML = 'x ABORT';
-	create.innerHTML = 'CREATE';
+	abortBtn.innerHTML = 'x ABORT';
+	createBtn.innerHTML = 'CREATE';
 
 	inputDiv.appendChild(input);
-	abortDiv.appendChild(abort);
+	abortDiv.appendChild(abortBtn);
 	createChannel.style.display = 'flex';
-	createChannel.appendChild(create);
+	createChannel.appendChild(createBtn);
 	headerDiv.appendChild(inputDiv);
 	headerDiv.appendChild(abortDiv);
 	document.getElementById('header2').appendChild(headerDiv);
@@ -124,12 +126,12 @@ function displayAddChannelInput() {
 
 // remove channel input section
 function removeAddChannelInput() {
-	addChannel.classList.remove('addBTN__active');
-	addChannel.classList.add('addBTN');
+	addChannelBtn.classList.remove('addBTN__active');
+	addChannelBtn.classList.add('addBTN');
 	input.value = "";
 	createChannel.style.display = 'none';
 	if (createChannel.getElementsByClassName('createBTN').length > 0) {
-		createChannel.removeChild(create);
+		createChannel.removeChild(createBtn);
 	}
 	const header2 = document.getElementById('header2');
 	if (header2.getElementsByClassName('addChannelInput__wrapper').length > 0) {
@@ -185,34 +187,31 @@ function sendChannelToServer(channel) {
 }
 
 // create new channel
-create.addEventListener('click', (e) => {
+createBtn.addEventListener('click', (e) => {
 	e.preventDefault();
 	e.stopPropagation();
-	var channelId = Object.keys(serverChannels).length + 1;
+	var newChannelId = Object.keys(serverChannels).length + 1;
 	let newChannelName = `#${document.getElementById('newChannelInput').value}`;
-	let newChannel = new NewChannel(channelId, newChannelName);
-	serverChannels[channelId] = newChannel
+	let newChannel = new NewChannel(newChannelId, newChannelName);
+	serverChannels[newChannelId] = newChannel
 	sendChannelToServer(newChannel);
-	displayChannelList(serverChannels);
+	currentDisplayChannelList();
 	removeAddChannelInput();
-	addChannel.classList.remove('addBTN__active');
-	addChannel.classList.add('addBTN');
+	addChannelBtn.classList.remove('addBTN__active');
+	addChannelBtn.classList.add('addBTN');
 });
 
 // abort removing channel input section
-abort.addEventListener('click', () => {
+abortBtn.addEventListener('click', () => {
 	removeAddChannelInput();
-	addChannel.classList.remove('addBTN__active');
-	addChannel.classList.add('addBTN');
+	addChannelBtn.classList.remove('addBTN__active');
+	addChannelBtn.classList.add('addBTN');
 });
 
 // display channel input section and abort removing channel input section
-addChannel.addEventListener('click', () => {
-	newChannelTab.classList.remove('tabBtn__active');
-	trendingTab.classList.remove('tabBtn__active');
-	favouritesTab.classList.remove('tabBtn__active');
+addChannelBtn.addEventListener('click', () => {
 	hideMessageElements();
-	if (addChannel.classList.contains('addBTN')) {
+	if (addChannelBtn.classList.contains('addBTN')) {
 		clearSelectedChannel();
 		displayAddChannelInput();
 	} else {
@@ -319,6 +318,7 @@ function displayChannelList(serverChannels) {
 				currentChannelFavStar.classList.remove('fas', 'fa-star', 'far');
 				currentChannelFavStar.classList.add(...classes);
 			}
+			updateChannelFavourite(channel);
 		}
 
 		let messageCount = document.createElement('div');
@@ -336,6 +336,28 @@ function displayChannelList(serverChannels) {
 		li.appendChild(imageDiv);
 		channelList.appendChild(li);
 	}
+}
+
+function updateChannelFavourite(channel){
+	let data = channel;
+	const method = {
+		method: 'PUT', // or 'POST'
+		body: JSON.stringify(data), // channel {object}!
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	}
+
+	fetch(`${serverURL}/channel/favourite`, method)
+		.then(res => {
+			return res.text()
+		})
+		.then((text) => {
+			console.log(text);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 }
 
 let newChannelTab = document.getElementById('Tab1');
@@ -390,11 +412,16 @@ function displayNewChannelList() {
 	displayChannelList(newChannels);
 }
 
-newChannelTab.addEventListener('click', displayNewChannelList);
+function handleChannelItemClick(displayChannelsFunction) {
+	currentDisplayChannelList = displayChannelsFunction;
+	currentDisplayChannelList();
+}
 
-trendingTab.addEventListener('click', displayTrendingChannelList);
+newChannelTab.addEventListener('click', handleChannelItemClick.bind(null, displayNewChannelList));
 
-favouritesTab.addEventListener('click', displayFavoChannelList);
+trendingTab.addEventListener('click', handleChannelItemClick.bind(null, displayTrendingChannelList));
+
+favouritesTab.addEventListener('click',handleChannelItemClick.bind(null,displayFavoChannelList));
 
 //create emoji list && and section
 let emojiSection = document.getElementById('emoji__section');
